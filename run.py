@@ -56,6 +56,7 @@ def main():
     print("22")
     print("23")
     print("24")
+    input("Enter your data here:\n")
     #print(colorize('RED', square))
 
 
