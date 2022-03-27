@@ -1,6 +1,5 @@
 import colorama
 
-
 symbols = {
   "HT":"-",
   "HH":"=",
@@ -50,7 +49,8 @@ def main():
     print("16")
     print("17")
     print("18")
-    print("19")
+    print(colorize("RED","19"))
+    reset_color()
     print("20")
     print("21")
     print("22")
