@@ -6,8 +6,11 @@ import colorama as c
 import func
 
 class BaseMap:
-    def __init__(self):
-        ""
+
+    def __init__(self, level):
+        self.level = level
+        self.lane = func.get_entry_lane(self.level)
+        self.side = func.get_entry_side(self.lane)
         self.build_map()
 
     def set_base_map(self):
@@ -29,28 +32,31 @@ class BaseMap:
         ]
         return map
 
-    def set_entry(self, level, map):
+    def set_entry(self, map):
         """
         Decides and sets the entry into the level based on level
         """
-        # returns 1, 2 or 3
-        lane = func.get_entry_lane(level) 
-        # returns 5 for lane 1; 3/7 for lane 2; 1/9 for lane 3
-        side = func.get_entry_side(lane) 
         entry = c.Back.GREEN + " " + c.Style.RESET_ALL
 
         # extracts and transforms string from map list into list
-        list_from_map_lane = list(map[side])  
+        list_from_map_lane = list(map[self.side])  
         # placing entry
         list_from_map_lane[5] = entry 
         # converting list back to string and placing it back
-        map[side] = "".join(list_from_map_lane) 
+        map[self.side] = "".join(list_from_map_lane) 
         return map
 
-    def set_path():
+    def set_path(self, map):
         """
         Creates and sets the main path through the level
         """
+        path = func.get_path_options()
+
+        for i in range(len(path)):
+            
+            i += 1
+
+        return map
 
     def set_exit():
         """
@@ -97,6 +103,7 @@ class BaseMap:
 
     def build_map(self):
         map = self.set_base_map()
-        map = self.set_entry(10, map)
+        map = self.set_entry(map)
+        map = self.set_path(map)
 
         self.display_map(map)

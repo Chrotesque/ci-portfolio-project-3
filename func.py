@@ -1,6 +1,22 @@
 # Import of 3rd party modules
 import random
 
+def sym(symbol):
+    """
+    Converts a string into a symbol using unicode characters
+    https://unicode-table.com/en/blocks/geometric-shapes/
+    """
+    switchcase = {
+        "square":"\u25a0",
+        "triangle":"\u25bc",
+        "disc":"\u25cf",
+        "heart":"\u2665",
+        "sword":"\u2694",
+        "death":"\u2620"
+    }
+    
+    return switchcase.get(symbol, "nothing")
+
 def get_entry_lane(level):
     """
     Chooses the level entry lane based on a random number and the current level
@@ -25,16 +41,16 @@ def get_entry_lane(level):
             i += 1
         
         if rand_num > lane_ranges[2]:
-            result = 3
+            lane = 3
         elif rand_num >= lane_ranges[1]:
-            result = 2
+            lane = 2
         else:
-            result = 1
+            lane = 1
     
     else:
-        result = 1
+        lane = 1
 
-    return result
+    return lane
 
 def get_entry_side(lane):
     """
@@ -43,32 +59,29 @@ def get_entry_side(lane):
     rand_num = random.randrange(1,3)
     if lane == 2:
         if rand_num > 1:
-            side = 3
+            side = 3 # lane 2 top
         else:
-            side = 7
+            side = 7 # lane 2 bottom
     elif lane == 3:
         if rand_num > 1:
-            side = 1
+            side = 1 # lane 3 top
         else:
-            side = 9
+            side = 9 # lane 3 bottom
     else:
-        side = 5
+        side = 5 # lane 1
     
     return side
 
-def sym(symbol):
+def get_path_options():
     """
-    Converts a string into a symbol using unicode characters
-    https://unicode-table.com/en/blocks/geometric-shapes/
+    Decides on the amount of avail paths depending on the lane
     """
-    switchcase = {
-        "square":"\u25a0",
-        "triangle":"\u25bc",
-        "disc":"\u25cf",
-        "heart":"\u2665",
-        "sword":"\u2694",
-        "death":"\u2620"
+    test = {
+        1:[0,1,1,1], # right
+        2:[1,0,1,1], # down
+        3:[1,0,1,1], # down
+        4:[1,1,2,1], # right
+        5:[1,0,2,1], # up
+        6:[0,1,1,0]  # right
     }
-    
-    return switchcase.get(symbol, "nothing")
-
+    return test
