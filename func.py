@@ -1,6 +1,11 @@
 import random
 
 def get_entry_lane(level):
+    """
+    Chooses the level entry lane based on a random number and the current level
+    Factor numbers specifically chosen for Lane 1 to reach ~40% at Level 10+,
+    Lane 2 ~35% and Lane 3 ~25%
+    """
     rand_num = random.randrange(1,101)
     lane_factors = {
         1:6.7,
@@ -29,3 +34,20 @@ def get_entry_lane(level):
         result = 1
 
     return result
+
+def sym(symbol):
+    """
+    Converts a string into a symbol using unicode characters
+    https://unicode-table.com/en/blocks/geometric-shapes/
+    """
+    switchcase = {
+        "square":"\u25a0",
+        "triangle":"\u25bc",
+        "disc":"\u25cf",
+        "heart":"\u2665",
+        "sword":"\u2694",
+        "death":"\u2620"
+    }
+    
+    return switchcase.get(symbol, "nothing")
+
