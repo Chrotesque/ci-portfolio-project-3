@@ -1,5 +1,6 @@
 # Import of 3rd party modules
 import random
+import colorama as c
 
 # Import of game specific modules
 import func
@@ -28,10 +29,18 @@ class BaseMap:
         ]
         return map
 
-    def set_entry(self, level):
+    def set_entry(self, level, map):
         """
         Decides and sets the entry into the level based on level
-        """        
+        """
+        lane = func.get_entry_lane(level)
+        side = func.get_entry_side(lane)
+        entry = c.Back.GREEN + " " + c.Style.RESET_ALL
+
+        list_from_map_lane = list(map[side])
+        list_from_map_lane[5] = entry
+        map[side] = "".join(list_from_map_lane)
+        return map
 
     def set_path():
         """
@@ -83,6 +92,6 @@ class BaseMap:
 
     def build_map(self):
         map = self.set_base_map()
-        self.set_entry(6)
+        map = self.set_entry(10, map)
 
         self.display_map(map)
