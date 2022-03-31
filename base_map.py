@@ -33,13 +33,18 @@ class BaseMap:
         """
         Decides and sets the entry into the level based on level
         """
-        lane = func.get_entry_lane(level)
-        side = func.get_entry_side(lane)
+        # returns 1, 2 or 3
+        lane = func.get_entry_lane(level) 
+        # returns 5 for lane 1; 3/7 for lane 2; 1/9 for lane 3
+        side = func.get_entry_side(lane) 
         entry = c.Back.GREEN + " " + c.Style.RESET_ALL
 
-        list_from_map_lane = list(map[side])
-        list_from_map_lane[5] = entry
-        map[side] = "".join(list_from_map_lane)
+        # extracts and transforms string from map list into list
+        list_from_map_lane = list(map[side])  
+        # placing entry
+        list_from_map_lane[5] = entry 
+        # converting list back to string and placing it back
+        map[side] = "".join(list_from_map_lane) 
         return map
 
     def set_path():
