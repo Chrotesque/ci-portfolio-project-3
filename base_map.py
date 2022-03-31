@@ -1,10 +1,13 @@
+# Import of 3rd party modules
 import random
 
+# Import of game specific modules
 import func
 
 class BaseMap:
     def __init__(self):
         ""
+        self.build_map()
 
     def set_base_map(self):
         """
@@ -28,8 +31,7 @@ class BaseMap:
     def set_entry(self, level):
         """
         Decides and sets the entry into the level based on level
-        """
-        
+        """        
 
     def set_path():
         """
@@ -70,3 +72,17 @@ class BaseMap:
         """
         Set down events within accessible rooms
         """
+
+    def display_map(self, map):
+        """
+
+        """
+        for i in range(len(map)):
+            print(map[i])
+            i += 1
+
+    def build_map(self):
+        map = self.set_base_map()
+        self.set_entry(6)
+
+        self.display_map(map)
