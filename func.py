@@ -1,3 +1,4 @@
+# Import of 3rd party modules
 import random
 
 def get_entry_lane(level):
@@ -34,6 +35,26 @@ def get_entry_lane(level):
         result = 1
 
     return result
+
+def get_entry_side(lane):
+    """
+    Decides the lane side for lanes 2 & 3
+    """
+    rand_num = random.randrange(1,3)
+    if lane == 2:
+        if rand_num > 1:
+            side = 3
+        else:
+            side = 7
+    elif lane == 3:
+        if rand_num > 1:
+            side = 1
+        else:
+            side = 9
+    else:
+        side = 5
+    
+    return side
 
 def sym(symbol):
     """
