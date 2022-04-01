@@ -36,25 +36,34 @@ class BaseMap:
         """
         Decides and sets the entry into the level based on level
         """
-        entry = c.Back.GREEN + " " + c.Style.RESET_ALL
+        entry = "X" #c.Back.GREEN + " " + c.Style.RESET_ALL
 
         # extracts and transforms string from map list into list
         list_from_map_lane = list(map[self.side])  
-        # placing entry
+        # placing entry starting at index 5
         list_from_map_lane[5] = entry 
         # converting list back to string and placing it back
         map[self.side] = "".join(list_from_map_lane) 
         return map
 
-    def set_path(self, map):
+    def set_path(self, map): # x0-4, y0-17
         """
         Creates and sets the main path through the level
         """
-        path = func.get_path_options()
+        coords = [func.lane_to_coords(self.side),0]
+        while coords[1] < 18:
+            step = func.advance_coords()
+            if step[1] == True:
+                list_coords = func.get_coords(coords)
+                
+                mid = list(map[list_coords[0]])
+                mid[list_coords[1]-1] = "o"
+                mid[list_coords[1]] = "o"
+                mid[list_coords[1]+1] = "o"
+                map[list_coords[0]] = "".join(mid)
 
-        for i in range(len(path)):
-            
-            i += 1
+                coords[1] += 1
+                
 
         return map
 
@@ -106,4 +115,5 @@ class BaseMap:
         map = self.set_entry(map)
         map = self.set_path(map)
 
+        # colorpass function
         self.display_map(map)

@@ -72,6 +72,18 @@ def get_entry_side(lane):
     
     return side
 
+def lane_to_coords(lane):
+    """
+    Converts the initial lane (side rather) to the x coordinate
+    """
+    return int((lane-1)/2)
+
+def advance_coords():
+    """
+    Advances coordinates for path creation
+    """
+    return [False, True, False] # for testing purposes
+
 def get_path_options():
     """
     Decides on the amount of avail paths depending on the lane
@@ -85,3 +97,14 @@ def get_path_options():
         6:[0,1,1,0]  # right
     }
     return test
+
+def get_coords(coords):
+    result = [0,0]
+
+    # x - lanes/rows
+    result[0] = coords[0] * 2 + 1
+
+    # y - columns
+    result[1] = 7 + 4 * coords[1]
+
+    return result
