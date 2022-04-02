@@ -1,5 +1,6 @@
 # Import of 3rd party modules
 import random
+import numpy.random as np
 
 def sym(symbol):
     """
@@ -8,7 +9,8 @@ def sym(symbol):
     """
     switchcase = {
         "square":"\u25a0",
-        "triangle":"\u25bc",
+        "tridown":"\u25bc",
+        "triright":"\u25ba",
         "disc":"\u25cf",
         "heart":"\u2665",
         "sword":"\u2694",
@@ -19,36 +21,15 @@ def sym(symbol):
 
 def get_entry_lane(level):
     """
-    Chooses the level entry lane based on a random number and the current level
-    Factor numbers specifically chosen for Lane 1 to reach ~40% at Level 10+,
-    Lane 2 ~35% and Lane 3 ~25%
+    Chooses the level entry lane based on a probability and level
     """
-    rand_num = random.randrange(1,101)
-    lane_factors = {
-        1:6.7,
-        3:3.12
-    }
-    lane_ranges = {
-        1:0,
-        2:0,
-        3:0
-    }
-
-    if level > 1:
-        for i in range(10):
-            lane_ranges[1] = 100 - ((level - 1) * lane_factors[1])
-            lane_ranges[2] = 100 - ((level - 2) * lane_factors[3])
-            i += 1
-        
-        if rand_num > lane_ranges[2]:
-            lane = 3
-        elif rand_num >= lane_ranges[1]:
-            lane = 2
-        else:
-            lane = 1
-    
-    else:
-        lane = 1
+    lanes = [1,2,3]
+    probabilities = [
+        1 - 0.06 * (level-1),
+        0 + 0.04 * (level-1),
+        0 + 0.02 * (level-1)
+    ]
+    lane = np.choice(lanes, 1, p=probabilities)
 
     return lane
 
@@ -72,33 +53,16 @@ def get_entry_side(lane):
     
     return side
 
-def lane_to_coords(lane):
+def lane_to_xcoord(lane):
     """
     Converts the initial lane (side rather) to the x coordinate
     """
     return int((lane-1)/2)
 
-def advance_coords():
-    """
-    Advances coordinates for path creation
-    """
-    return [False, True, False] # for testing purposes
-
-def get_path_options():
-    """
-    Decides on the amount of avail paths depending on the lane
-    """
-    test = {
-        1:[0,1,1,1], # right
-        2:[1,0,1,1], # down
-        3:[1,0,1,1], # down
-        4:[1,1,2,1], # right
-        5:[1,0,2,1], # up
-        6:[0,1,1,0]  # right
-    }
-    return test
-
 def get_coords(coords):
+    """
+    Converts normalized coordinates to actual grid coordinates
+    """
     result = [0,0]
 
     # x - lanes/rows
@@ -108,3 +72,57 @@ def get_coords(coords):
     result[1] = 7 + 4 * coords[1]
 
     return result
+
+def advance_coords():
+    """
+    Advances coordinates for path creation
+    """
+    return [False, True, False] # for testing purposes
+
+def get_path_options(prev_coords, coords):
+    """
+    Decides on the amount of avail paths depending on the lane
+    """
+           
+
+        
+def can_advance(prev_coords, coords, mode=0):
+    """
+    Returns a dictionary of booleans to indicate in which direction
+    a path can be generated based on a previous and current set of
+    coordinates
+    """
+    advance = {
+        "up":True,
+        "right":True,
+        "down":True,
+        "left":True
+    }
+
+    # map boundaries
+    if coords[0] == 0:
+        advance["up"] = False
+    elif coords[0] == 4:
+        advance["down"] = False
+    
+    if coords[1] == 0:
+        advance["left"] = False
+    elif coords[1] == 16:
+        advance["right"] = False
+
+    # inner map movements
+    if prev_coords[1] < coords[1]:
+        advance["left"] = False
+    elif prev_coords[1] > coords[1]:
+        advance["right"] = False
+
+    if prev_coords[0] < coords[0]:
+        advance["up"] = False
+    elif prev_coords[0] > coords[0]:
+        advance["down"] = False
+  
+    # mode 1 being called by path generation, 
+    if mode == 1:
+        advance["left"] = False
+
+    return advance

@@ -36,7 +36,7 @@ class BaseMap:
         """
         Decides and sets the entry into the level based on level
         """
-        entry = "X" #c.Back.GREEN + " " + c.Style.RESET_ALL
+        entry = func.sym("triright")
 
         # extracts and transforms string from map list into list
         list_from_map_lane = list(map[self.side])  
@@ -50,20 +50,11 @@ class BaseMap:
         """
         Creates and sets the main path through the level
         """
-        coords = [func.lane_to_coords(self.side),0]
-        while coords[1] < 18:
-            step = func.advance_coords()
-            if step[1] == True:
-                list_coords = func.get_coords(coords)
-                
-                mid = list(map[list_coords[0]])
-                mid[list_coords[1]-1] = "o"
-                mid[list_coords[1]] = "o"
-                mid[list_coords[1]+1] = "o"
-                map[list_coords[0]] = "".join(mid)
+        prev_coords = [func.lane_to_xcoord(self.side),0]
+        coords = prev_coords[:]
+        lane = self.side
 
-                coords[1] += 1
-                
+
 
         return map
 
