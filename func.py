@@ -73,56 +73,80 @@ def get_coords(coords):
 
     return result
 
-def advance_coords():
-    """
-    Advances coordinates for path creation
-    """
-    return [False, True, False] # for testing purposes
-
-def get_path_options(prev_coords, coords):
+def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
     Decides on the amount of avail paths depending on the lane
     """
            
+    lane = coords[0]
+    row = coords[1]
+    options = {}
 
+    # probabilities
+    if lane == 0:
+        options["right"] = 0.3
+        options["down"] = 0.4
+        options["left"] = 0.3
+    elif lane == 1:
+        options["up"] = 0.2
+        options["right"] = 0.25
+        options["down"] = 0.3
+        options["left"] = 0.25
+    elif lane == 2:
+        options["up"] = 0.25
+        options["right"] = 0.25
+        options["down"] = 0.25
+        options["left"] = 0.25
+    elif lane == 3:
+        options["up"] = 0.3
+        options["right"] = 0.25
+        options["down"] = 0.2
+        options["left"] = 0.25
+    else: #lane == 4
+        options["up"] = 0.4
+        options["right"] = 0.3
+        options["left"] = 0.3
         
-def can_advance(prev_coords, coords, mode=0):
-    """
-    Returns a dictionary of booleans to indicate in which direction
-    a path can be generated based on a previous and current set of
-    coordinates
-    """
-    advance = {
-        "up":True,
-        "right":True,
-        "down":True,
-        "left":True
-    }
-
-    # map boundaries
-    if coords[0] == 0:
-        advance["up"] = False
-    elif coords[0] == 4:
-        advance["down"] = False
-    
-    if coords[1] == 0:
-        advance["left"] = False
-    elif coords[1] == 16:
-        advance["right"] = False
-
-    # inner map movements
-    if prev_coords[1] < coords[1]:
-        advance["left"] = False
-    elif prev_coords[1] > coords[1]:
-        advance["right"] = False
-
+    # option removal
+    # going up
+    if prev_coords[0] > coords[0]:
+        del options["down"]
+    # going down
     if prev_coords[0] < coords[0]:
-        advance["up"] = False
-    elif prev_coords[0] > coords[0]:
-        advance["down"] = False
-  
-    # mode 1 being called by path generation, 
-    if mode == 1:
-        advance["left"] = False
+        del options["up"]
+    # going left
+    if prev_coords[1] > coords[1]:
+        del options["right"]
+    # going right
+    if prev_coords[1] < coords[1]:
+        del options["left"]
+    
+    # can't go left
+    if "left" in options and row == 0:
+        del options["left"]
+    # can't go right
+    if "right" in options and row == 17 and create_exit == False:
+        del options["right"]
+    # can't go up
+    if "up" in options and lane == 0:
+        del options["up"]
+    # can't go down
+    if "down" in options and lane == 4:
+        del options["down"]
 
-    return advance
+    if "left" in options and exclude_left == True:
+        del options["left"]
+
+    key_to_list = list(options.keys())
+    val_to_list = list(options.values())
+
+    # add probability difference to remaining probabilities
+    if len(val_to_list) < 4 and len(val_to_list) != 0:
+        diff = (1 - sum(val_to_list)) / len(val_to_list)
+        for i in range(len(val_to_list)):
+            val_to_list[i] += diff
+
+    #result = "right"
+    if len(val_to_list) != 0:
+        result = np.choice(key_to_list, 1, p=val_to_list)
+    return result

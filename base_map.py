@@ -11,7 +11,6 @@ class BaseMap:
         self.level = level
         self.lane = func.get_entry_lane(self.level)
         self.side = func.get_entry_side(self.lane)
-        self.build_map()
 
     def set_base_map(self):
         """
@@ -52,9 +51,37 @@ class BaseMap:
         """
         prev_coords = [func.lane_to_xcoord(self.side),0]
         coords = prev_coords[:]
+        prev_coords[1] -= 1
         lane = self.side
 
+        while coords[1] < 18:
+            path = func.get_path_options(prev_coords, coords, True, True)
+            prev_coords = coords[:]
+            list_coords = func.get_coords(coords)
+            if path == "up":
+                section = list(map[list_coords[0]-1])
+                section[list_coords[1]-1] = " "
+                section[list_coords[1]] = " "
+                section[list_coords[1]+1] = " "
+                map[list_coords[0]-1] = "".join(section)
+                coords[0] -= 1
+            if path == "down":
+                section = list(map[list_coords[0]+1])
+                section[list_coords[1]-1] = " "
+                section[list_coords[1]] = " "
+                section[list_coords[1]+1] = " "
+                map[list_coords[0]+1] = "".join(section)
+                coords[0] += 1
+            if path == "right":
+                section = list(map[list_coords[0]])
 
+                if coords[1] == 17:
+                    section[list_coords[1]+2] = func.sym("tridown")
+                else:
+                    section[list_coords[1]+2] = " "
+
+                map[list_coords[0]] = "".join(section)
+                coords[1] += 1
 
         return map
 
