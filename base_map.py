@@ -90,15 +90,59 @@ class BaseMap:
         Set down the level exit at the end of the main path
         """
 
-    def set_branches():
+    def set_branches(self, map, avail_rooms):
         """
         Creates and sets branches going off of the main path
         """
 
-    def get_accessible_rooms():
+
+    def get_room_list(self, map):
         """
-        Collects all accessible rooms for entity distribution
+        Checks all rooms for their accessibility status
         """
+        rooms = {
+                "closed":[],
+                "open":[]
+        }
+
+        # for each row
+        for i in range(5):
+            # for each column
+            for j in range(18):
+                coords = func.get_coords([i,j])
+                top = list(map[coords[0]-1])
+                mid = list(map[coords[0]])
+                bot = list(map[coords[0]+1])
+
+                if top[coords[1]] == " ":
+                    status = True
+                elif bot[coords[1]] == " ":
+                    status = True
+                elif mid[coords[1]-2] == " ":
+                    status = True
+                elif mid[coords[1]+2] == " ":
+                    status = True
+                else:
+                    status = False
+
+                if status == True:
+                    rooms["open"].append(coords[:])
+                else:
+                    rooms["closed"].append(coords)
+
+                j += 1
+            i += 1
+
+        return rooms
+
+    def set_room_list(self, room_list, room, change):
+        """
+        Modify list of rooms
+        """
+
+        
+
+        return room_list
 
     def set_items():
         """
@@ -132,6 +176,8 @@ class BaseMap:
         map = self.set_base_map()
         map = self.set_entry(map)
         map = self.set_path(map)
+        room_list = self.get_room_list(map)
+        #map = self.set_branches(map, room_list)
 
         # colorpass function
         self.display_map(map)

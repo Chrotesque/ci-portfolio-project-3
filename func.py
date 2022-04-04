@@ -75,7 +75,8 @@ def get_coords(coords):
 
 def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
-    Decides on the amount of avail paths depending on the lane
+    Creates a path based on probabilities with properties to exclude 
+    left and right for main path creation vs branch creation
     """
            
     lane = coords[0]
@@ -150,3 +151,5 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
     if len(val_to_list) != 0:
         result = np.choice(key_to_list, 1, p=val_to_list)
     return result
+
+#
