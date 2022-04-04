@@ -7,6 +7,12 @@ import func
 
 class BaseMap:
 
+    MAP = []
+    ROOMS = {
+            "closed":[],
+            "open":[]
+    }
+
     def __init__(self, level):
         self.level = level
         self.lane = func.get_entry_lane(self.level)
@@ -16,7 +22,7 @@ class BaseMap:
         """
         Creates the base map layout in list format
         """
-        map = [
+        self.MAP = [
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+",
         " L3  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |",
         "     +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+",
@@ -29,23 +35,21 @@ class BaseMap:
         " L3  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |",
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+"
         ]
-        return map
 
-    def set_entry(self, map):
+    def set_entry(self):
         """
         Decides and sets the entry into the level based on level
         """
         entry = func.sym("triright")
 
         # extracts and transforms string from map list into list
-        list_from_map_lane = list(map[self.side])  
+        list_from_map_lane = list(self.MAP[self.side])  
         # placing entry starting at index 5
         list_from_map_lane[5] = entry 
         # converting list back to string and placing it back
-        map[self.side] = "".join(list_from_map_lane) 
-        return map
+        self.MAP[self.side] = "".join(list_from_map_lane) 
 
-    def set_path(self, map): # x0-4, y0-17
+    def set_path(self): # x0-4, y0-17
         """
         Creates and sets the main path through the level
         """
@@ -59,60 +63,53 @@ class BaseMap:
             prev_coords = coords[:]
             list_coords = func.get_coords(coords)
             if path == "up":
-                section = list(map[list_coords[0]-1])
+                section = list(self.MAP[list_coords[0]-1])
                 section[list_coords[1]-1] = " "
                 section[list_coords[1]] = " "
                 section[list_coords[1]+1] = " "
-                map[list_coords[0]-1] = "".join(section)
+                self.MAP[list_coords[0]-1] = "".join(section)
                 coords[0] -= 1
             if path == "down":
-                section = list(map[list_coords[0]+1])
+                section = list(self.MAP[list_coords[0]+1])
                 section[list_coords[1]-1] = " "
                 section[list_coords[1]] = " "
                 section[list_coords[1]+1] = " "
-                map[list_coords[0]+1] = "".join(section)
+                self.MAP[list_coords[0]+1] = "".join(section)
                 coords[0] += 1
             if path == "right":
-                section = list(map[list_coords[0]])
+                section = list(self.MAP[list_coords[0]])
 
                 if coords[1] == 17:
                     section[list_coords[1]+2] = func.sym("tridown")
                 else:
                     section[list_coords[1]+2] = " "
 
-                map[list_coords[0]] = "".join(section)
+                self.MAP[list_coords[0]] = "".join(section)
                 coords[1] += 1
-
-        return map
 
     def set_exit():
         """
         Set down the level exit at the end of the main path
         """
 
-    def set_branches(self, map, avail_rooms):
+    def set_branches(self):
         """
         Creates and sets branches going off of the main path
         """
 
 
-    def get_room_list(self, map):
+    def get_room_list(self):
         """
         Checks all rooms for their accessibility status
         """
-        rooms = {
-                "closed":[],
-                "open":[]
-        }
-
         # for each row
         for i in range(5):
             # for each column
             for j in range(18):
                 coords = func.get_coords([i,j])
-                top = list(map[coords[0]-1])
-                mid = list(map[coords[0]])
-                bot = list(map[coords[0]+1])
+                top = list(self.MAP[coords[0]-1])
+                mid = list(self.MAP[coords[0]])
+                bot = list(self.MAP[coords[0]+1])
 
                 if top[coords[1]] == " ":
                     status = True
@@ -126,21 +123,19 @@ class BaseMap:
                     status = False
 
                 if status == True:
-                    rooms["open"].append(coords[:])
+                    self.ROOMS["open"].append(coords[:])
                 else:
-                    rooms["closed"].append(coords)
+                    self.ROOMS["closed"].append(coords)
 
                 j += 1
             i += 1
 
-        return rooms
-
-    def set_room_list(self, room_list, room, change):
+    def set_room_list(self, room, change):
         """
         Modify list of rooms
         """
 
-        
+
 
         return room_list
 
@@ -164,20 +159,19 @@ class BaseMap:
         Set down events within accessible rooms
         """
 
-    def display_map(self, map):
+    def display_map(self):
         """
 
         """
-        for i in range(len(map)):
-            print(map[i])
-            i += 1
+        for i in range(len(self.MAP)):
+            print(self.MAP[i])
 
     def build_map(self):
-        map = self.set_base_map()
-        map = self.set_entry(map)
-        map = self.set_path(map)
-        room_list = self.get_room_list(map)
+        self.set_base_map()
+        self.set_entry()
+        self.set_path()
+        self.get_room_list()
         #map = self.set_branches(map, room_list)
 
         # colorpass function
-        self.display_map(map)
+        self.display_map()
