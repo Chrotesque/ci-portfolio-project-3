@@ -59,19 +59,30 @@ def lane_to_xcoord(lane):
     """
     return int((lane-1)/2)
 
-def get_coords(coords):
+def get_coords(coords, reverse=False):
     """
-    Converts normalized coordinates to actual grid coordinates
+    Converts coordinates from/to normalized to grid coordinates
     """
     result = [0,0]
 
-    # x - lanes/rows
-    result[0] = coords[0] * 2 + 1
-
-    # y - columns
-    result[1] = 7 + 4 * coords[1]
+    if reverse == False:
+        # x - lanes/rows
+        result[0] = coords[0] * 2 + 1
+        # y - columns
+        result[1] = 7 + 4 * coords[1]
+    else:
+        # x - lanes/rows
+        result[0] = int((coords[0] - 1) / 2)
+        # y - columns
+        result[1] = int((coords[1] - 7) / 4)
 
     return result
+
+def get_coords_adjacent(coords):
+    """
+
+    """
+    result = []
 
 def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
