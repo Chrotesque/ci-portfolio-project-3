@@ -1,5 +1,5 @@
 # Import of 3rd party modules
-import random
+import random as r
 import colorama as c
 
 # Import of game specific modules
@@ -49,54 +49,125 @@ class BaseMap:
         # converting list back to string and placing it back
         self.MAP[self.side] = "".join(list_from_map_lane) 
 
-    def set_path(self): # x0-4, y0-17
+    def set_exit(self, coords):
+        """
+        Sets the exit into the level at the paths end
+        """
+        exit = func.sym("tridown")
+
+        list_from_map_lane = list(self.MAP[coords[0]])
+        list_from_map_lane[coords[1]+2] = exit
+        self.MAP[coords[0]] = "".join(list_from_map_lane)
+
+    def set_path(self):
         """
         Creates and sets the main path through the level
         """
         prev_coords = [func.lane_to_xcoord(self.side),0]
-        coords = prev_coords[:]
-        prev_coords[1] -= 1
-        lane = self.side
+        readable_coords = prev_coords[:]
 
-        while coords[1] < 18:
-            path = func.get_path_options(prev_coords, coords, True, True)
-            prev_coords = coords[:]
-            list_coords = func.get_coords(coords)
-            if path == "up":
-                section = list(self.MAP[list_coords[0]-1])
-                section[list_coords[1]-1] = " "
-                section[list_coords[1]] = " "
-                section[list_coords[1]+1] = " "
-                self.MAP[list_coords[0]-1] = "".join(section)
-                coords[0] -= 1
-            if path == "down":
-                section = list(self.MAP[list_coords[0]+1])
-                section[list_coords[1]-1] = " "
-                section[list_coords[1]] = " "
-                section[list_coords[1]+1] = " "
-                self.MAP[list_coords[0]+1] = "".join(section)
-                coords[0] += 1
-            if path == "right":
-                section = list(self.MAP[list_coords[0]])
-
-                if coords[1] == 17:
-                    section[list_coords[1]+2] = func.sym("tridown")
-                else:
-                    section[list_coords[1]+2] = " "
-
-                self.MAP[list_coords[0]] = "".join(section)
-                coords[1] += 1
-
-    def set_exit():
-        """
-        Set down the level exit at the end of the main path
-        """
+        while readable_coords[1] < 18:
+            path = func.get_path_options(prev_coords, readable_coords, True, True)
+            prev_coords = readable_coords[:]
+            real_coords = func.get_coords(readable_coords)
+            readable_coords = func.next_coordinate(readable_coords, path)
+            self.remove_wall(real_coords, path)
+            if readable_coords[1] == 18:
+                self.set_exit(real_coords)
 
     def set_branches(self):
         """
-        Creates and sets branches going off of the main path
+        Creates and sets branches through the level until they hit an open room
         """
+        prev_coords = self.ROOMS["closed"][r.randrange(0,len(self.ROOMS["closed"]))]
 
+        list_map = list(self.MAP[prev_coords[0]]) # temp
+        list_map[prev_coords[1]] = func.sym("disc") # temp
+        self.MAP[prev_coords[0]] = "".join(list_map) # temp
+
+        prev_coords = func.get_coords(prev_coords, True)
+        readable_coords = prev_coords[:]
+
+
+        i = 0
+        while i < 10:
+            branch = func.get_path_options(prev_coords, readable_coords, False, False)
+            prev_coords = readable_coords[:]
+            real_coords = func.get_coords(readable_coords)
+            print(f"coords before removal: {readable_coords}")
+            readable_coords = func.next_coordinate(readable_coords, branch) 
+            print(f"coords next: {readable_coords}")
+            
+            if self.check_room(readable_coords) == False:
+                self.remove_wall(real_coords, branch)
+                break
+            self.remove_wall(real_coords, branch)
+            i += 1
+  
+
+    def remove_wall(self, coords, side, replacer=" "):
+        """
+        Removes a wall of a given side based off of coordinates and returns
+        changed coordinates in accordance with the walls direction
+        """
+        if side == "up":
+            wall = list(self.MAP[coords[0]-1])
+            wall[coords[1]-1] = replacer
+            wall[coords[1]] = replacer
+            wall[coords[1]+1] = replacer
+            self.MAP[coords[0]-1] = "".join(wall)
+        elif side == "down":
+            wall = list(self.MAP[coords[0]+1])
+            wall[coords[1]-1] = replacer
+            wall[coords[1]] = replacer
+            wall[coords[1]+1] = replacer
+            self.MAP[coords[0]+1] = "".join(wall)
+        elif side == "right":
+            wall = list(self.MAP[coords[0]])
+            wall[coords[1]+2] = replacer
+            self.MAP[coords[0]] = "".join(wall)
+        else: # side == "left"
+            wall = list(self.MAP[coords[0]])
+            wall[coords[1]-2] = replacer
+            self.MAP[coords[0]] = "".join(wall)
+
+    def check_room(self, coords):
+        """
+        WIP
+        """
+        print(f"b4: {coords}")
+        coords = func.get_coords(coords)
+        print(f"aft: {coords}")
+        top = list(self.MAP[coords[0]-1])
+        mid = list(self.MAP[coords[0]])
+        bot = list(self.MAP[coords[0]+1])
+        if top[coords[1]] == " ":
+            mid[coords[1]] = "O"
+            self.MAP[coords[0]] = "".join(mid)
+            print("opening found")
+            status = False
+        elif bot[coords[1]] == " ":
+            mid[coords[1]] = "O"
+            self.MAP[coords[0]] = "".join(mid)
+            print("opening found")
+            status = False
+        elif mid[coords[1]-2] == " ":
+            mid[coords[1]] = "O"
+            self.MAP[coords[0]] = "".join(mid)
+            print("opening found")
+            status = False
+        elif mid[coords[1]+2] == " ":
+            mid[coords[1]] = "O"
+            self.MAP[coords[0]] = "".join(mid)
+            print("opening found")
+            status = False
+        else:
+            mid[coords[1]] = "X"
+            self.MAP[coords[0]] = "".join(mid)
+            print("closed room")
+            status = True
+
+        return status
 
     def get_room_list(self):
         """
@@ -135,26 +206,25 @@ class BaseMap:
         Modify list of rooms
         """
 
-
-
         return room_list
 
-    def set_items():
+
+    def set_items(self):
         """
         Set down all collectible items within accessible rooms
         """
 
-    def set_enemies():
+    def set_enemies(self):
         """
         Set down enemy encounters within accessible rooms
         """
 
-    def set_npcs():
+    def set_npcs(self):
         """
         Set down NPCs like vendors within accessible rooms        
         """
 
-    def set_event():
+    def set_event(self):
         """
         Set down events within accessible rooms
         """
@@ -171,7 +241,7 @@ class BaseMap:
         self.set_entry()
         self.set_path()
         self.get_room_list()
-        #map = self.set_branches(map, room_list)
+        self.set_branches()
 
         # colorpass function
         self.display_map()

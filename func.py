@@ -2,6 +2,8 @@
 import random
 import numpy.random as np
 
+ROW_INC = 4
+
 def sym(symbol):
     """
     Converts a string into a symbol using unicode characters
@@ -78,18 +80,11 @@ def get_coords(coords, reverse=False):
 
     return result
 
-def get_coords_adjacent(coords):
-    """
-
-    """
-    result = []
-
 def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
     Creates a path based on probabilities with properties to exclude 
     left and right for main path creation vs branch creation
     """
-           
     lane = coords[0]
     row = coords[1]
     options = {}
@@ -121,16 +116,16 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
         
     # option removal
     # going up
-    if prev_coords[0] > coords[0]:
+    if prev_coords[0] > coords[0] and "down" in options:
         del options["down"]
     # going down
-    if prev_coords[0] < coords[0]:
+    if prev_coords[0] < coords[0] and "up" in options:
         del options["up"]
     # going left
-    if prev_coords[1] > coords[1]:
+    if prev_coords[1] > coords[1] and "right" in options:
         del options["right"]
     # going right
-    if prev_coords[1] < coords[1]:
+    if prev_coords[1] < coords[1] and "left" in options:
         del options["left"]
     
     # can't go left
@@ -158,9 +153,27 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
         for i in range(len(val_to_list)):
             val_to_list[i] += diff
 
-    #result = "right"
     if len(val_to_list) != 0:
         result = np.choice(key_to_list, 1, p=val_to_list)
+    else:
+        result = "none"
+
+    #print(result)
     return result
+
+def next_coordinate(coords, direction):
+    """
+    Returns the coordinate of the room after the next move based on the direction
+    """
+    if direction == "up":
+        coords[0] -= 1
+    elif direction == "down":
+        coords[0] += 1
+    elif direction == "right":
+        coords[1] += 1
+    else: # direction == "left"
+        coords[1] -= 1
+    return coords
+
 
 #
