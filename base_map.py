@@ -45,11 +45,13 @@ class BaseMap:
         Decides and sets the entry into the level based on level
         """
         entry = func.sym("triright")
+        player = func.sym("disc")
 
         # extracts and transforms string from map list into list
         list_from_map_lane = list(self.MAP[self.side])  
         # placing entry starting at index 5
         list_from_map_lane[5] = entry 
+        list_from_map_lane[7] = player
         # converting list back to string and placing it back
         self.MAP[self.side] = "".join(list_from_map_lane) 
 
