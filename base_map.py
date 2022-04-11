@@ -10,7 +10,11 @@ class BaseMap:
     MAP = []
     ROOMS = {
             "closed":[],
-            "open":[]
+            "open":{
+                "all":[],
+                "main":[],
+                "branches":[]
+            }
     }
 
     def __init__(self, level):
@@ -71,6 +75,8 @@ class BaseMap:
             path = func.get_path_options(prev_coords, readable_coords, True, True)
             prev_coords = readable_coords[:]
             real_coords = func.get_coords(readable_coords)
+            self.ROOMS["open"]["main"].append(real_coords)
+            self.ROOMS["open"]["all"].append(real_coords)
             readable_coords = func.next_coordinate(readable_coords, path)
             self.remove_wall(real_coords, path)
             if readable_coords[1] == 18:
@@ -107,7 +113,7 @@ class BaseMap:
                 elif func.get_coords(readable_coords) in new_open_rooms:
                     continue
                 # next room is on open room list
-                elif func.get_coords(readable_coords) in self.ROOMS["open"]:
+                elif func.get_coords(readable_coords) in self.ROOMS["open"]["all"]:
                     self.remove_wall(real_coords, branch)
                     finish = True
                     break
@@ -116,7 +122,8 @@ class BaseMap:
 
             # add newly opened rooms to open room list
             for i in range(len(new_open_rooms)):
-                self.ROOMS["open"].append(new_open_rooms[i])
+                self.ROOMS["open"]["all"].append(new_open_rooms[i])
+                self.ROOMS["open"]["branches"].append(new_open_rooms[i])
 
             # extend the while loop if branch is super short
             if len(new_open_rooms) < 2:
@@ -147,9 +154,9 @@ class BaseMap:
             wall[coords[1]-2] = replacer
             self.MAP[coords[0]] = "".join(wall)
 
-    def set_room_list(self):
+    def set_closed_room_list(self):
         """
-        Creates lists of all open and closed rooms after initial path creation
+        Creates lists of all closed rooms after initial path creation
         """
         # for each row
         for i in range(5):
@@ -171,9 +178,7 @@ class BaseMap:
                 else:
                     status = False
 
-                if status == True:
-                    self.ROOMS["open"].append(coords[:])
-                else:
+                if status == False:
                     self.ROOMS["closed"].append(coords)
 
                 j += 1
@@ -210,7 +215,7 @@ class BaseMap:
         self.set_base_map()
         self.set_entry()
         self.set_path()
-        self.set_room_list()
+        self.set_closed_room_list()
         self.set_branches()
 
         # colorpass function
