@@ -66,6 +66,7 @@ class BaseMap:
         prev_coords = [func.lane_to_xcoord(self.side),0]
         readable_coords = prev_coords[:]
 
+        # loop until path reaches the end of the map
         while readable_coords[1] < 18:
             path = func.get_path_options(prev_coords, readable_coords, True, True)
             prev_coords = readable_coords[:]
@@ -77,38 +78,53 @@ class BaseMap:
 
     def set_branches(self):
         """
-        Creates and sets branches through the level until they hit an open room
+        Creates and sets a variable amount of branches through the level until they hit an 
+        open room
         """
-        prev_coords = self.ROOMS["closed"][r.randrange(0,len(self.ROOMS["closed"]))]
-
-        list_map = list(self.MAP[prev_coords[0]]) # temp
-        list_map[prev_coords[1]] = func.sym("disc") # temp
-        self.MAP[prev_coords[0]] = "".join(list_map) # temp
-
-        prev_coords = func.get_coords(prev_coords, True)
-        readable_coords = prev_coords[:]
-
-
-        i = 0
-        while i < 10:
-            branch = func.get_path_options(prev_coords, readable_coords, False, False)
-            prev_coords = readable_coords[:]
-            real_coords = func.get_coords(readable_coords)
-            print(f"coords before removal: {readable_coords}")
-            readable_coords = func.next_coordinate(readable_coords, branch) 
-            print(f"coords next: {readable_coords}")
+        branch_amount = 0
+        while branch_amount < 4:
+            branch_amount += 1
+            new_open_rooms = []
+            prev_coords = self.ROOMS["closed"][r.randrange(0,len(self.ROOMS["closed"]))]
+            self.ROOMS["closed"].remove(prev_coords)
+            new_open_rooms.append(prev_coords)
+            prev_coords = func.get_coords(prev_coords, True)
+            readable_coords = prev_coords[:]
             
-            if self.check_room(readable_coords) == False:
-                self.remove_wall(real_coords, branch)
-                break
-            self.remove_wall(real_coords, branch)
-            i += 1
-  
+            finish = False
+            # carve out a branch until an open room is hit
+            while finish == False:
+                branch = func.get_path_options(prev_coords, readable_coords, False, False)
+                prev_coords = readable_coords[:]
+                real_coords = func.get_coords(readable_coords)
+                readable_coords = func.next_coordinate(readable_coords, branch) 
+                # next room is on closed room list
+                if func.get_coords(readable_coords) in self.ROOMS["closed"]:
+                    self.ROOMS["closed"].remove(func.get_coords(readable_coords))
+                    new_open_rooms.append(func.get_coords(readable_coords))
+                    self.remove_wall(real_coords, branch)
+                # next room was on closed room list and already opened up
+                elif func.get_coords(readable_coords) in new_open_rooms:
+                    continue
+                # next room is on open room list
+                elif func.get_coords(readable_coords) in self.ROOMS["open"]:
+                    self.remove_wall(real_coords, branch)
+                    finish = True
+                    break
+                else:
+                    print("this shouldn't happen")
+
+            # add newly opened rooms to open room list
+            for i in range(len(new_open_rooms)):
+                self.ROOMS["open"].append(new_open_rooms[i])
+
+            # extend the while loop if branch is super short
+            if len(new_open_rooms) < 2:
+                branch_amount -= 1
 
     def remove_wall(self, coords, side, replacer=" "):
         """
-        Removes a wall of a given side based off of coordinates and returns
-        changed coordinates in accordance with the walls direction
+        Removes a wall of a given side based off of coordinates
         """
         if side == "up":
             wall = list(self.MAP[coords[0]-1])
@@ -131,47 +147,9 @@ class BaseMap:
             wall[coords[1]-2] = replacer
             self.MAP[coords[0]] = "".join(wall)
 
-    def check_room(self, coords):
+    def set_room_list(self):
         """
-        WIP
-        """
-        print(f"b4: {coords}")
-        coords = func.get_coords(coords)
-        print(f"aft: {coords}")
-        top = list(self.MAP[coords[0]-1])
-        mid = list(self.MAP[coords[0]])
-        bot = list(self.MAP[coords[0]+1])
-        if top[coords[1]] == " ":
-            mid[coords[1]] = "O"
-            self.MAP[coords[0]] = "".join(mid)
-            print("opening found")
-            status = False
-        elif bot[coords[1]] == " ":
-            mid[coords[1]] = "O"
-            self.MAP[coords[0]] = "".join(mid)
-            print("opening found")
-            status = False
-        elif mid[coords[1]-2] == " ":
-            mid[coords[1]] = "O"
-            self.MAP[coords[0]] = "".join(mid)
-            print("opening found")
-            status = False
-        elif mid[coords[1]+2] == " ":
-            mid[coords[1]] = "O"
-            self.MAP[coords[0]] = "".join(mid)
-            print("opening found")
-            status = False
-        else:
-            mid[coords[1]] = "X"
-            self.MAP[coords[0]] = "".join(mid)
-            print("closed room")
-            status = True
-
-        return status
-
-    def get_room_list(self):
-        """
-        Checks all rooms for their accessibility status
+        Creates lists of all open and closed rooms after initial path creation
         """
         # for each row
         for i in range(5):
@@ -200,14 +178,6 @@ class BaseMap:
 
                 j += 1
             i += 1
-
-    def set_room_list(self, room, change):
-        """
-        Modify list of rooms
-        """
-
-        return room_list
-
 
     def set_items(self):
         """
@@ -240,7 +210,7 @@ class BaseMap:
         self.set_base_map()
         self.set_entry()
         self.set_path()
-        self.get_room_list()
+        self.set_room_list()
         self.set_branches()
 
         # colorpass function

@@ -141,6 +141,7 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
     if "down" in options and lane == 4:
         del options["down"]
 
+    # for main path generation, to never go left
     if "left" in options and exclude_left == True:
         del options["left"]
 
