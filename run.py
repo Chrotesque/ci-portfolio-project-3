@@ -4,6 +4,13 @@ import base_map
 import visible_map as vis_map
 import entity
 
+COMMANDS = {
+  "help":["help","halp","hlp","h"],
+  "exit":["exit", "quit", "stop", "restart", "q"],
+  "move":["w", "s", "a", "d"],
+  "use":["use", "item"]
+}
+
 def request_input():
   player_input = input("What's next? (type 'help' for a list of possible commands\n")
   validate_input(player_input)
@@ -35,42 +42,59 @@ def validate_name(command):
   return name
 
 def validate_input(command):
+  """
+  Validates and sanitizes user input and initiates associated action
+  """
+  command = command.lower()
+
   try:
-    if command == "help":
-      print("help requested")
-    elif command == "use":
+    if command in COMMANDS["help"]:
+      help()
+    elif command in COMMANDS["exit"]:
+      exit = input("Are you sure you want to restart the game from scratch?\n")
+      if not exit:
+        print("no input on restart game")
+      else:
+        print("game restart requested")
+    elif command in COMMANDS["use"]:
       print("use of item requested")
-    elif command == ("W" or "A" or "S" or "D"):
+    elif command in COMMANDS["move"]:
       print(f"movement input detected: {command}")
     else:
-      ""
+      print("Unknown command")
   except:
     ""
 
-def initiate():
+def list_of_commands(key):
+  """
+  Returns a list of available commands from the COMMANDS constant
+  """
+  return ", ".join(COMMANDS[key])
 
+def initiate():
+  """
+  Initiates the game
+  """
   name = validate_name(input("What's your name?\n"))
   player = entity.Player(name, 10, 2)
-  print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
-
-  game = base_map.BaseMap(10)
-  game.build_map()
-
-  main(game)
-
-def main():
-  """
-  Runs the game logic
-  """
   level = 10
-  player = entity.Player("Bobster", 10, 2)
+  game = base_map.BaseMap(level)
+
+  main(game, player, level)
+
+def main(game, player, level):
+  """
+  Game Logic Loop
+  """
+
+  game_over = False
 
   print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
   print(f"Current Level: {level}")
 
-  test = base_map.BaseMap(level)
-  test.build_map()
-  player_input = request_input()
+  game.build_map()
+  
+  while game_over == False:
+    player_input = request_input()
 
 initiate()
-#main()
