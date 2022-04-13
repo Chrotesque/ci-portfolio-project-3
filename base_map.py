@@ -220,5 +220,4 @@ class BaseMap:
         self.set_closed_room_list()
         self.set_branches()
 
-        # colorpass function
-        self.display_map()
+        return self.MAP

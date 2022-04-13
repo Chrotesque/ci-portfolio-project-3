@@ -92,7 +92,8 @@ def main(game, player, level):
   print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
   print(f"Current Level: {level}")
 
-  game.build_map()
+  map = game.build_map()
+  vis_map.VisibleMap(map).display_map()
   
   while game_over == False:
     player_input = request_input()
