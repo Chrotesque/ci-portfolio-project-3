@@ -8,6 +8,7 @@ import func
 class BaseMap:
 
     MAP = []
+    BASE = []
     ROOMS = {
             "closed":[],
             "open":{
@@ -15,6 +16,62 @@ class BaseMap:
                 "main":[],
                 "branches":[]
             }
+    }
+    ENTITIES = {
+        "entry":{
+            "sym":"triright",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        },
+        "exit":{
+            "sym":"tridown",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        },
+        "player":{
+            "sym":"disc",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        },
+        "vendor":{
+            "sym":"hamburger",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        },
+        "enemy":{
+            "sym":"sword",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        },
+        "loot":{
+            "sym":"star",
+            "instance":[
+                {
+                    "draw":True,
+                    "coords":[]
+                }
+            ]
+        }
     }
 
     def __init__(self, level):
@@ -26,7 +83,7 @@ class BaseMap:
         """
         Creates the base map layout in list format
         """
-        self.MAP = [
+        self.BASE = [
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+",
         " L3  |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |   |",
         "     +---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+---+",
@@ -40,30 +97,19 @@ class BaseMap:
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+"
         ]
 
-    def set_entry(self):
+    def set_entry_coords(self):
         """
-        Decides and sets the entry into the level based on level
+        Writes the entry & player coordinates (as they're always linked)
+        to ENTITIES 
         """
-        entry = func.sym("triright")
-        player = func.sym("disc")
+        self.ENTITIES["entry"]["instance"][0]["coords"] = [self.side, 5]
+        self.ENTITIES["player"]["instance"][0]["coords"] = [self.side, 7]
 
-        # extracts and transforms string from map list into list
-        list_from_map_lane = list(self.MAP[self.side])  
-        # placing entry starting at index 5
-        list_from_map_lane[5] = entry 
-        list_from_map_lane[7] = player
-        # converting list back to string and placing it back
-        self.MAP[self.side] = "".join(list_from_map_lane) 
-
-    def set_exit(self, coords):
+    def set_exit_coords(self, coords):
         """
-        Sets the exit into the level at the paths end
+        Writes the exit coordinates into ENTITIES at the main paths end
         """
-        exit = func.sym("tridown")
-
-        list_from_map_lane = list(self.MAP[coords[0]])
-        list_from_map_lane[coords[1]+2] = exit
-        self.MAP[coords[0]] = "".join(list_from_map_lane)
+        self.ENTITIES["exit"]["instance"][0]["coords"] = [coords[0], coords[1]+2]
 
     def set_path(self):
         """
@@ -82,7 +128,7 @@ class BaseMap:
             readable_coords = func.next_coordinate(readable_coords, path)
             self.remove_wall(real_coords, path)
             if readable_coords[1] == 18:
-                self.set_exit(real_coords)
+                self.set_exit_coords(real_coords)
 
     def set_branches(self):
         """
@@ -136,25 +182,25 @@ class BaseMap:
         Removes a wall of a given side based off of coordinates
         """
         if side == "up":
-            wall = list(self.MAP[coords[0]-1])
+            wall = list(self.BASE[coords[0]-1])
             wall[coords[1]-1] = replacer
             wall[coords[1]] = replacer
             wall[coords[1]+1] = replacer
-            self.MAP[coords[0]-1] = "".join(wall)
+            self.BASE[coords[0]-1] = "".join(wall)
         elif side == "down":
-            wall = list(self.MAP[coords[0]+1])
+            wall = list(self.BASE[coords[0]+1])
             wall[coords[1]-1] = replacer
             wall[coords[1]] = replacer
             wall[coords[1]+1] = replacer
-            self.MAP[coords[0]+1] = "".join(wall)
+            self.BASE[coords[0]+1] = "".join(wall)
         elif side == "right":
-            wall = list(self.MAP[coords[0]])
+            wall = list(self.BASE[coords[0]])
             wall[coords[1]+2] = replacer
-            self.MAP[coords[0]] = "".join(wall)
+            self.BASE[coords[0]] = "".join(wall)
         else: # side == "left"
-            wall = list(self.MAP[coords[0]])
+            wall = list(self.BASE[coords[0]])
             wall[coords[1]-2] = replacer
-            self.MAP[coords[0]] = "".join(wall)
+            self.BASE[coords[0]] = "".join(wall)
 
     def set_closed_room_list(self):
         """
@@ -165,9 +211,9 @@ class BaseMap:
             # for each column
             for j in range(18):
                 coords = func.get_coords([i,j])
-                top = list(self.MAP[coords[0]-1])
-                mid = list(self.MAP[coords[0]])
-                bot = list(self.MAP[coords[0]+1])
+                top = list(self.BASE[coords[0]-1])
+                mid = list(self.BASE[coords[0]])
+                bot = list(self.BASE[coords[0]+1])
 
                 if top[coords[1]] == " ":
                     status = True
@@ -206,18 +252,62 @@ class BaseMap:
         Set down events within accessible rooms
         """
 
-    def display_map(self):
+    def attempt_move(self, entity, instance, direction):
         """
 
         """
-        for i in range(len(self.MAP)):
-            print(self.MAP[i])
+        coords = self.ENTITIES.get(entity)["instance"][instance]["coords"]
+        if direction == "w":
+            map = list(self.BASE[coords[0]-1])
+            if map[coords[1]] == " ":
+                new_coords = [coords[0]-2, coords[1]]
+                self.update_entity_coords(entity, instance, coords, new_coords)
+        elif direction == "s":
+            map = list(self.BASE[coords[0]+1])
+            if map[coords[1]] == " ":
+                new_coords = [coords[0]+2, coords[1]]
+                self.update_entity_coords(entity, instance, coords, new_coords)
+        elif direction == "a":
+            map = list(self.BASE[coords[0]])
+            if map[coords[1]-2] == " ":
+                new_coords = [coords[0], coords[1]-4]
+                self.update_entity_coords(entity, instance, coords, new_coords)
+        elif direction == "d":
+            map = list(self.BASE[coords[0]])
+            if map[coords[1]+2] == " ":
+                new_coords = [coords[0], coords[1]+4]
+                self.update_entity_coords(entity, instance, coords, new_coords)
+
+
+    def update_entity_coords(self, entity, instance, old_coords, new_coords):
+        """
+        Updates an entities coordinates in ENTITIES
+        """
+        self.ENTITIES.get(entity)["instance"][instance]["coords"] = new_coords
+
+
+    def set_entities(self):
+        """
+        Places all entities from ENTITIES
+        """
+        # copies the base map 
+        self.MAP = self.BASE[:]
+        # completes the map with entities
+        for item in self.ENTITIES:
+            for i in range(len(self.ENTITIES[item]["instance"])):
+                if self.ENTITIES[item]["instance"][i]["coords"]: #change to draw later
+                    draw = list(self.MAP[self.ENTITIES[item]["instance"][i]["coords"][0]])
+                    draw[self.ENTITIES[item]["instance"][i]["coords"][1]] = func.sym(self.ENTITIES[item]["sym"])
+                    self.MAP[self.ENTITIES[item]["instance"][i]["coords"][0]] = "".join(draw)
+
+    def get_map(self):
+        self.set_entities()
+        return self.MAP
 
     def build_map(self):
         self.set_base_map()
-        self.set_entry()
+        self.set_entry_coords()
         self.set_path()
         self.set_closed_room_list()
         self.set_branches()
-
-        return self.MAP
+        self.set_entities()

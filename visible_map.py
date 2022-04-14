@@ -3,7 +3,7 @@ from func import sym
 
 class VisibleMap:
     def __init__(self, map):
-        self.map = map
+        self.map = map[:]
 
     def set_visible_map():
         """
@@ -36,12 +36,12 @@ class VisibleMap:
         """
         colorization = {
             sym("disc"):{
-                "Fore":"RED",
-                "Back":"BLUE"
+                "Fore":"GREEN",
+                "Back":"RESET"
             },
             sym("tridown"):{
-                "Fore":"BLUE",
-                "Back":"GREEN"
+                "Fore":"MAGENTA",
+                "Back":"RESET"
             },
             sym("triright"):{
                 "Fore":"MAGENTA",
@@ -64,8 +64,6 @@ class VisibleMap:
                             list_map[j] = getattr(c.Fore, col_val[k]["Fore"]) + getattr(c.Back, col_val[k]["Back"]) + col_key[k] + c.Style.RESET_ALL
                 # convert from list to string again
                 self.map[i] = "".join(list_map)
-            
-
 
     def display_map(self):
         """

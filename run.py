@@ -11,10 +11,6 @@ COMMANDS = {
   "use":["use", "item"]
 }
 
-def request_input():
-  player_input = input("What's next? (type 'help' for a list of possible commands\n")
-  validate_input(player_input)
-
 def validate_name(command):
   """
   Validates input for the players name, alternatively assigns a name wo input
@@ -41,7 +37,11 @@ def validate_name(command):
 
   return name
 
-def validate_input(command):
+def request_input(game):
+  player_input = input("What's next? (type 'help' for a list of possible commands\n")
+  validate_input(player_input, game)
+
+def validate_input(command, game):
   """
   Validates and sanitizes user input and initiates associated action
   """
@@ -49,7 +49,7 @@ def validate_input(command):
 
   try:
     if command in COMMANDS["help"]:
-      help()
+      print("help screen requested")
     elif command in COMMANDS["exit"]:
       exit = input("Are you sure you want to restart the game from scratch?\n")
       if not exit:
@@ -60,6 +60,7 @@ def validate_input(command):
       print("use of item requested")
     elif command in COMMANDS["move"]:
       print(f"movement input detected: {command}")
+      game.attempt_move("player", 0, command)
     else:
       print("Unknown command")
   except:
@@ -76,9 +77,10 @@ def initiate():
   Initiates the game
   """
   name = validate_name(input("What's your name?\n"))
-  player = entity.Player(name, 10, 2)
+  player = entity.Player(name, 10, 2, [])
   level = 10
   game = base_map.BaseMap(level)
+  game.build_map()
 
   main(game, player, level)
 
@@ -92,10 +94,9 @@ def main(game, player, level):
   print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
   print(f"Current Level: {level}")
 
-  map = game.build_map()
-  vis_map.VisibleMap(map).display_map()
-  
   while game_over == False:
-    player_input = request_input()
+    map = game.get_map()
+    vis_map.VisibleMap(map).display_map()
+    player_input = request_input(game)
 
 initiate()
