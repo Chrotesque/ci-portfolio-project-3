@@ -1,5 +1,6 @@
 # Import of game specific modules
-import random as r
+from random import randrange
+from os import system
 import base_map
 import visible_map as vis_map
 import entity
@@ -29,7 +30,7 @@ def validate_name(command):
   if not command:
     second_chance = input("Are you sure you don't want to enter a name?\n")
     if not second_chance:
-      name = names[r.randrange(0,len(names))]
+      name = names[randrange(0,len(names))]
     else:
       name = second_chance
   else:
@@ -77,7 +78,7 @@ def initiate():
   Initiates the game
   """
   name = validate_name(input("What's your name?\n"))
-  player = entity.Player(name, 10, 2, [])
+  player = entity.Player(name, 10, 2)
   level = 10
   game = base_map.BaseMap(level)
   game.build_map()
@@ -91,10 +92,10 @@ def main(game, player, level):
 
   game_over = False
 
-  print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
-  print(f"Current Level: {level}")
-
   while game_over == False:
+    system('cls||clear')
+    print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
+    print(f"Current Level: {level}")
     map = game.get_map()
     vis_map.VisibleMap(map).display_map()
     player_input = request_input(game)
