@@ -16,7 +16,9 @@ def sym(symbol):
         "disc":"\u25cf",
         "heart":"\u2665",
         "sword":"\u2694",
-        "death":"\u2620"
+        "death":"\u2620",
+        "hamburger":"\u1f354",
+        "star":"\u2605"
     }
     
     return switchcase.get(symbol, "nothing")
