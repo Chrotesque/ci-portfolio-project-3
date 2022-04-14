@@ -82,6 +82,8 @@ def initiate():
   level = 10
   game = base_map.BaseMap(level)
   game.build_map()
+  map = game.get_map()
+  vis_map.VisibleMap(map).set_visible_map()
 
   main(game, player, level)
 
@@ -93,11 +95,11 @@ def main(game, player, level):
   game_over = False
 
   while game_over == False:
-    system('cls||clear')
+    #system('cls||clear')
     print(f"Player: {player.name} / HP: {player.hp} / DMG: {player.dmg}")
     print(f"Current Level: {level}")
     map = game.get_map()
-    vis_map.VisibleMap(map).display_map()
+    vis_map.VisibleMap(map).display_map(base_map.BaseMap.ENTITIES["player"]["instance"][0]["coords"])
     player_input = request_input(game)
 
 initiate()
