@@ -83,7 +83,7 @@ def initiate():
   game = base_map.BaseMap(level)
   game.build_map()
   map = game.get_map()
-  vis_map.VisibleMap(map).set_visible_map()
+  vis_map.VisibleMap(map).set_mask()
 
   main(game, player, level)
 
