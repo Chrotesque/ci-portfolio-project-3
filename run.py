@@ -59,9 +59,9 @@ def validate_name():
     ]
 
     print(f"""
-    
     Hey there! {c.Fore.YELLOW}Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}
     
+    Be sure to have a look at the help menu first, before you get started.
     """)
 
     player_input = input("To get started - what's your name?\n")
@@ -110,7 +110,7 @@ def validate_input(command, game):
                 note_to_display.modify_note("You can't go there.")
 
         else:
-            note_to_display.modify_note(f"The command {command} is not recognized.")
+            note_to_display.modify_note(f"I'm afraid '{command}' does not compute!")
     except:
         note_to_display.modify_note("Program error, the developer screwed up! Try restarting the game.")
 
@@ -180,7 +180,7 @@ def help():
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
     print(f""" 
-    {c.Fore.YELLOW}Welcome to the help screen of Endless Dungeons on a Budget{c.Style.RESET_ALL}
+    Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
 
         This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
         generated dungeon. Level by level you try to delve deeper until you 
