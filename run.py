@@ -81,7 +81,7 @@ def validate_name():
                 note_to_display.modify_note("See? Wasn't that hard now, was it?")
                 break
         # input too long
-        elif len(player_input) > 56:
+        elif len(player_input) > 50:
             player_input = input("That's a tad long, try something with less than 56 characters!\n> ")
             if not player_input:
                 i += 1
@@ -97,10 +97,6 @@ def validate_name():
 
         i += 1
     return name
-
-def request_input(game):
-    player_input = input("What's next? (type 'help' for a list of possible commands)\n> ")
-    validate_input(player_input, game)
 
 def validate_input(command, game):
     """
@@ -151,10 +147,10 @@ def print_top_infobar(player):
         player_info.append(" ")
 
     # adding the name
-    player_info.append(name)
+    player_info.append("Name: " + name)
 
     # adding space between name and health bar
-    for i in range(screen_length - len(name) - len(health_string) - max):
+    for i in range(screen_length - len(name)-6 - len(health_string) - max):
         player_info.append(" ")
         i += 1
 
@@ -259,6 +255,6 @@ def main(game, player, level):
         print_bottom_infobar(level)
         note_to_display.print_note()
         
-        player_input = request_input(game)
+        validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
 
 initiate()
