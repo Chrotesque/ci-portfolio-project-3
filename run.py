@@ -203,6 +203,7 @@ def list_of_commands(key):
 def help():
     # clearing the screen
     system('cls||clear')
+    void = ""
 
     print(f"Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}")
     print(f"""
