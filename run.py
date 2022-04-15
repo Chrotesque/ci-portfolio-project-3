@@ -102,7 +102,8 @@ def validate_input(command, game):
     """
     Validates and sanitizes user input and initiates associated action
     """
-    command = command.lower()
+    new_command = ""
+    new_command = command[:].lower()
 
     try:
         if command in COMMANDS["help"]:
@@ -228,7 +229,7 @@ def help():
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
-    input("Press Enter to return to the game ...\n> ")
+    void = input("Press Enter to return to the game ...\n> ")
 
 def initiate():
     """
@@ -260,6 +261,7 @@ def main(game, player, level):
 
     while game_over == False:
         system('cls||clear')
+        temp = ""
         map = game.get_map()
 
         print_top_infobar(player)
@@ -267,6 +269,8 @@ def main(game, player, level):
         print_bottom_infobar(player, level)
         note_to_display.print_note()
         
-        validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
+        temp = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
+        system('cls||clear')
+
 
 initiate()

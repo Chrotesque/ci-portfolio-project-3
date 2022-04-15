@@ -11,7 +11,7 @@ class VisibleMap:
 
     def set_mask(self):
         """
-        Creates an the initial MASK
+        Creates the initial MASK
         """
         for i in range(11):
             if i == 0 or i == 10:
