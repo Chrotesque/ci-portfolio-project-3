@@ -31,7 +31,7 @@ note_to_display = Notifications()
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
-  "exit":["exit", "quit", "stop", "restart"],
+  "restart":["again", "redo", "restart"],
   "move":{
     "w":f"You moved a room to the north {func.sym('dir_north')}",
     "s":f"You moved a room to the south {func.sym('dir_south')}",
@@ -93,7 +93,7 @@ def validate_input(command, game):
     try:
         if command in COMMANDS["help"]:
             help()
-        elif command in COMMANDS["exit"]:
+        elif command in COMMANDS["restart"]:
             exit = input("Are you sure you want to restart the game from scratch?\n")
             if not exit:
                 print("no input on restart game")
@@ -112,22 +112,7 @@ def validate_input(command, game):
         else:
             note_to_display.modify_note(f"The command {command} is not recognized.")
     except:
-        print("this shouldnt happen")
-        note_to_display.modify_note("this shouldn't happen")
-
-def list_of_commands(key):
-    """
-    Returns a list of available commands from the COMMANDS constant
-    """
-    return ", ".join(COMMANDS[key])
-
-def show_last_activity(string):
-    """
-
-    """
-    print(f"""
-        ... {str(string)}
-    """)
+        note_to_display.modify_note("Program error, the developer screwed up! Try restarting the game.")
 
 def print_top_infobar(player):
     """
@@ -182,21 +167,45 @@ def print_bottom_infobar(level):
         empty += " "
     print(f"{empty}{string}")
 
+def list_of_commands(key):
+    """
+    Returns a list of available commands from the COMMANDS constant
+    """
+    return f"{c.Fore.WHITE},{c.Style.RESET_ALL} {c.Fore.CYAN}".join(COMMANDS[key])
+
 def help():
     # clearing the screen
     system('cls||clear')
 
+    note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
+
     print(f"""
     {c.Fore.YELLOW}Welcome to the help screen of Endless Dungeons on a Budget{c.Style.RESET_ALL}
 
-        This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a procedurally generated dungeon.
-        Level by level you try to delve deeper until you either give up or get yourself killed. 
-        Throughout the way you will find some loot, some monsters and maybe a friendly 
-        neighborhood vendor here and there to help you. For a price {c.Fore.YELLOW}{func.sym('star')}{c.Style.RESET_ALL}  of course.
+        This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a procedurally 
+        generated dungeon. Level by level you try to delve deeper until you 
+        either give up or get yourself killed. 
+        Throughout the way you will find some loot, some monsters and maybe a 
+        friendly neighborhood vendor here and there to help you. 
+        For a price {c.Fore.YELLOW}{func.sym('star')}{c.Style.RESET_ALL}  of course.
+
+        The dungeon is divided into 5 "lanes", marked by L1 to L3. 
+        L1 is the safest lane, L3 the hardest. It depends on you to choose
+        which lanes to stick you. That is if the dungeon gives you a choice.
+
+        The following actions are available to you:
+        - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
+            > commands: {c.Fore.CYAN}{list_of_commands("move")}{c.Style.RESET_ALL}
+        - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
+            > commands: {c.Fore.CYAN}{list_of_commands("use")}{c.Style.RESET_ALL}
+        - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
+            > commands: {c.Fore.CYAN}{list_of_commands("restart")}{c.Style.RESET_ALL}
+        - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
+            > commands: {c.Fore.CYAN}{list_of_commands("help")}{c.Style.RESET_ALL}
     """)
 
     # to stop the main loop from displaying the map
-    input("Press Enter or type anything (and then press enter) to return to the game\n")
+    input("Press Enter to return to the game ...\n")
 
 def initiate():
     """
