@@ -205,8 +205,7 @@ def help():
     system('cls||clear')
     void = ""
 
-    print(f"Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}")
-    print(f"""
+    help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
     either give up or get yourself killed. Throughout you will find loot, 
@@ -225,7 +224,9 @@ def help():
         > commands: {c.Fore.CYAN}{list_of_commands('restart')}{c.Style.RESET_ALL}
     - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
         > commands: {c.Fore.CYAN}{list_of_commands('help')}{c.Style.RESET_ALL}
-    """)
+    """
+
+    print(help_text)
 
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
