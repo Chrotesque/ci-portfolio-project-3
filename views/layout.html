@@ -8,15 +8,29 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/xterm.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/3.14.5/addons/attach/attach.js"></script>
-    <title>Python Terminal by Code Institute</title>
+    <title>Endless Dungeons on a Budget</title>
     <style>
         body {
             font-family: Arial;
+            background-color: #303030;
         }
 
         /**
         * Default styles for xterm.js
         */
+
+        main {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #terminal {
+            width: 730px;
+            background-color: black;
+            box-shadow: 0 0 5rem brown;
+            padding: 1.5rem;
+        }
 
         .xterm {
             font-feature-settings: "liga"0;

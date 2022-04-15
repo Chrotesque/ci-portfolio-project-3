@@ -182,16 +182,14 @@ def help():
     print(f"""
     {c.Fore.YELLOW}Welcome to the help screen of Endless Dungeons on a Budget{c.Style.RESET_ALL}
 
-        This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a procedurally 
+        This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
         generated dungeon. Level by level you try to delve deeper until you 
-        either give up or get yourself killed. 
-        Throughout the way you will find some loot, some monsters and maybe a 
-        friendly neighborhood vendor here and there to help you. 
-        For a price {c.Fore.YELLOW}{func.sym('star')}{c.Style.RESET_ALL}  of course.
+        either give up or get yourself killed. Throughout you will find loot, 
+        monsters, etc.
 
-        The dungeon is divided into 5 "lanes", marked by L1 to L3. 
+        The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
         L1 is the safest lane, L3 the hardest. It depends on you to choose
-        which lanes to stick you. That is if the dungeon gives you a choice.
+        which lanes to stick to. That is if the dungeon gives you a choice.
 
         The following actions are available to you:
         - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
