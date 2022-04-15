@@ -202,6 +202,7 @@ def list_of_commands(key):
 
 def help():
     # clearing the screen
+    system('cls||clear')
 
     help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
@@ -269,7 +270,6 @@ def main(game, player, level):
         note_to_display.print_note()
         
         validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
-        system('cls||clear')
 
 
 initiate()
