@@ -59,7 +59,7 @@ def validate_name():
     ]
 
     print(f"""
-    Hey there! {c.Fore.YELLOW}Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}
+    Hey there! Welcome to {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
     
     Be sure to have a look at the help menu first, before you get started.
     """)
@@ -177,34 +177,32 @@ def help():
     # clearing the screen
     system('cls||clear')
 
-    note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
+    print(f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
 
-    print(f""" 
-        Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
+    This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
+    generated dungeon. Level by level you try to delve deeper until you 
+    either give up or get yourself killed. Throughout you will find loot, 
+    monsters, etc.
 
-        This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
-        generated dungeon. Level by level you try to delve deeper until you 
-        either give up or get yourself killed. Throughout you will find loot, 
-        monsters, etc.
+    The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
+    L1 is the safest lane, L3 the hardest. It depends on you to choose
+    which lanes to stick to. That is if the dungeon gives you a choice.
 
-        The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
-        L1 is the safest lane, L3 the hardest. It depends on you to choose
-        which lanes to stick to. That is if the dungeon gives you a choice.
-
-        The following actions are available to you:
-        - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
-            > commands: {c.Fore.CYAN}{list_of_commands("move")}{c.Style.RESET_ALL}
-        - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
-            > commands: {c.Fore.CYAN}{list_of_commands("use")}{c.Style.RESET_ALL}
-        - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
-            > commands: {c.Fore.CYAN}{list_of_commands("restart")}{c.Style.RESET_ALL}
-        - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
-            > commands: {c.Fore.CYAN}{list_of_commands("help")}{c.Style.RESET_ALL}
+    The following actions are available to you:
+    - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
+        > commands: {c.Fore.CYAN}{list_of_commands("move")}{c.Style.RESET_ALL}
+    - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
+        > commands: {c.Fore.CYAN}{list_of_commands("use")}{c.Style.RESET_ALL}
+    - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
+        > commands: {c.Fore.CYAN}{list_of_commands("restart")}{c.Style.RESET_ALL}
+    - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
+        > commands: {c.Fore.CYAN}{list_of_commands("help")}{c.Style.RESET_ALL}
     """)
+
+    note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
     input("Press Enter to return to the game ...\n")
-    system('cls||clear')
 
 def initiate():
     """
