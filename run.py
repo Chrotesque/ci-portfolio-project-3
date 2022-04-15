@@ -237,7 +237,7 @@ def main(game, player, level):
     game_over = False
 
     while game_over == False:
-        #system('cls||clear')
+        system('cls||clear')
         map = game.get_map()
 
         print_top_infobar(player)
