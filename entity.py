@@ -7,9 +7,10 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__(self, name, hp_cur, hp_max, dmg):
+    def __init__(self, name, hp_cur, hp_max, dmg, gold):
         super().__init__(name, hp_cur, dmg)
         self.hp_max = hp_max
+        self.gold = gold
 
 
 class Enemy(Entity):

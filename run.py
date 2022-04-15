@@ -23,9 +23,9 @@ class Notifications:
         for i in range(gap):
             string += " "
 
-        print(f"""{string}{c.Fore.YELLOW}Narrator:{c.Style.RESET_ALL}
-     {self.note_to_display}
-        """)
+        print("\n")
+        print(f"{string}{c.Fore.YELLOW}Narrator:{c.Style.RESET_ALL}")
+        print(f"{string}{self.note_to_display}\n")
 
 note_to_display = Notifications()
 
@@ -170,16 +170,28 @@ def print_top_infobar(player):
 
     print("".join(player_info))
 
-def print_bottom_infobar(level):
+def print_bottom_infobar(player, level):
     """
     Prints the level at the bottom right of the map
     """
-    empty = ""
-    string = "Level " + str(level)
+    front_gap = 5
+    screen_length = 78 - front_gap
 
-    for i in range(78-len(string)):
-        empty += " "
-    print(f"{empty}{string}")
+    bottom_info = []
+
+    for i in range(front_gap):
+        bottom_info.append(" ")
+
+    front_text = f"{c.Fore.YELLOW}{func.sym('star')} Gold: {str(player.gold)}{c.Style.RESET_ALL}"
+    back_text = "Level " + str(level)
+
+    bottom_info.append(front_text)
+    for i in range(screen_length - len(front_text)+9 - len(back_text)):
+        bottom_info.append(" ")
+
+    bottom_info.append(back_text)
+
+    print("".join(bottom_info))
 
 def list_of_commands(key):
     """
@@ -224,7 +236,7 @@ def initiate():
     """
     welcome()
     name = validate_name()
-    player = entity.Player(name, 5, 10, 2)
+    player = entity.Player(name, 5, 10, 2, 0)
     level = 10
     game = base_map.BaseMap(level)
     game.build_map()
@@ -252,7 +264,7 @@ def main(game, player, level):
 
         print_top_infobar(player)
         vis_map.VisibleMap(map).display_map(base_map.BaseMap.ENTITIES["player"]["instance"][0]["coords"])
-        print_bottom_infobar(level)
+        print_bottom_infobar(player, level)
         note_to_display.print_note()
         
         validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
