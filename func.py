@@ -22,7 +22,7 @@ def sym(symbol):
         "dir_west":"\u25c1",
         "dir_east":"\u25b7",
         "dir_north":"\u25b3",
-        "dir_south":"\u25bd",
+        "dir_south":"\u25bd"
     }
     
     return switchcase.get(symbol, "nothing")

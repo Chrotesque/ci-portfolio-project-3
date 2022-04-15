@@ -1,8 +1,5 @@
-# Import of 3rd party modules
-import random as r
+from random import randrange
 import colorama as c
-
-# Import of game specific modules
 import func
 
 class BaseMap:
@@ -139,7 +136,7 @@ class BaseMap:
         while branch_amount < 4:
             branch_amount += 1
             new_open_rooms = []
-            prev_coords = self.ROOMS["closed"][r.randrange(0,len(self.ROOMS["closed"]))]
+            prev_coords = self.ROOMS["closed"][randrange(0,len(self.ROOMS["closed"]))]
             self.ROOMS["closed"].remove(prev_coords)
             new_open_rooms.append(prev_coords)
             prev_coords = func.get_coords(prev_coords, True)
@@ -262,21 +259,33 @@ class BaseMap:
             if map[coords[1]] == " ":
                 new_coords = [coords[0]-2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
+                return True
+            else:
+                return False
         elif direction == "s":
             map = list(self.BASE[coords[0]+1])
             if map[coords[1]] == " ":
                 new_coords = [coords[0]+2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
+                return True
+            else:
+                return False
         elif direction == "a":
             map = list(self.BASE[coords[0]])
             if map[coords[1]-2] == " ":
                 new_coords = [coords[0], coords[1]-4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
+                return True
+            else:
+                return False
         elif direction == "d":
             map = list(self.BASE[coords[0]])
             if map[coords[1]+2] == " ":
                 new_coords = [coords[0], coords[1]+4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
+                return True
+            else:
+                return False
 
 
     def update_entity_coords(self, entity, instance, old_coords, new_coords):
