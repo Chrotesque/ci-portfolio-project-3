@@ -129,3 +129,6 @@ class VisibleMap:
         self.colorize_map()
         for i in range(len(self.VISIBLE)):
             print(self.VISIBLE[i])
+
+        for i in range(len(self.map)):
+            print(self.map[i])

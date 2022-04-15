@@ -43,11 +43,16 @@ COMMANDS = {
 
 last_activity = "test"
 
+def welcome():
+    print(f"""{c.Fore.YELLOW}Hey there! Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}
+    
+Be sure to have a look at the help menu first, before you get started.
+    """)
+
 def validate_name():
     """
     Validates input for the players name, alternatively assigns a name w/o input
     """
-
     names = [
         "Unknown Adventurer",
         "Very Anonymous Adventurer",
@@ -57,31 +62,30 @@ def validate_name():
         "Mysterious Adventurer",
         "Mr. Confidentiality"
     ]
+   
+    name_chosen = False
+    i = 0
+    while name_chosen == False:
+        # initial input
+        if i == 0:
 
-    print(f"""
-    Hey there! Welcome to {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
-    
-    Be sure to have a look at the help menu first, before you get started.
-    """)
-
-    player_input = input("To get started - what's your name?\n")
-
-    if not player_input:
-        second_chance = input("Are you sure you don't want to enter a name? You will get one either way.\n")
-        if not second_chance:
-            name = names[randrange(0,len(names))]
-            note_to_display.modify_note(f"Have it your way, '{name}'!")
+            player_input = input("To get started - what's your name?\n> ")
+        # reset input for additional attempts
         else:
-            name = second_chance
-            note_to_display.modify_note("See? Wasn't that hard now, was it?")
-    else:
-        name = player_input
-        note_to_display.modify_note(f"Welcome {name}! Off to your death you go ...")
+            player_input = ""
 
+        # additional attempts
+        if not player_input:
+            player_input = input("Are you sure you don't want to enter a name? You will get one either way.\n> ")
+        else:
+            name = player_input
+            break
+
+        i += 1
     return name
 
 def request_input(game):
-    player_input = input("What's next? (type 'help' for a list of possible commands)\n")
+    player_input = input("What's next? (type 'help' for a list of possible commands)\n> ")
     validate_input(player_input, game)
 
 def validate_input(command, game):
@@ -94,7 +98,7 @@ def validate_input(command, game):
         if command in COMMANDS["help"]:
             help()
         elif command in COMMANDS["restart"]:
-            exit = input("Are you sure you want to restart the game from scratch?\n")
+            exit = input("Are you sure you want to restart the game from scratch?\n> ")
             if not exit:
                 print("no input on restart game")
             else:
@@ -177,8 +181,8 @@ def help():
     # clearing the screen
     system('cls||clear')
 
-    print(f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
-
+    print(f"Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}")
+    print(f"""
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
     either give up or get yourself killed. Throughout you will find loot, 
@@ -202,12 +206,13 @@ def help():
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
-    input("Press Enter to return to the game ...\n")
+    input("Press Enter to return to the game ...\n> ")
 
 def initiate():
     """
     Initiates the game
     """
+    welcome()
     name = validate_name()
     player = entity.Player(name, 5, 10, 2)
     level = 10
@@ -218,6 +223,12 @@ def initiate():
 
     main(game, player, level)
 
+def new_level(level):
+    """
+    Increases the level of a running game
+    """
+    new_level = level+1
+
 def main(game, player, level):
     """
     Game Logic Loop
@@ -226,7 +237,7 @@ def main(game, player, level):
     game_over = False
 
     while game_over == False:
-        system('cls||clear')
+        #system('cls||clear')
         map = game.get_map()
 
         print_top_infobar(player)
