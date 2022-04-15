@@ -190,13 +190,13 @@ def help():
 
     The following actions are available to you:
     - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
-        > commands: {c.Fore.CYAN}{list_of_commands("move")}{c.Style.RESET_ALL}
+        > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}
     - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
-        > commands: {c.Fore.CYAN}{list_of_commands("use")}{c.Style.RESET_ALL}
+        > commands: {c.Fore.CYAN}{list_of_commands('use')}{c.Style.RESET_ALL}
     - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
-        > commands: {c.Fore.CYAN}{list_of_commands("restart")}{c.Style.RESET_ALL}
+        > commands: {c.Fore.CYAN}{list_of_commands('restart')}{c.Style.RESET_ALL}
     - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
-        > commands: {c.Fore.CYAN}{list_of_commands("help")}{c.Style.RESET_ALL}
+        > commands: {c.Fore.CYAN}{list_of_commands('help')}{c.Style.RESET_ALL}
     """)
 
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
