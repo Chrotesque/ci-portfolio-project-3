@@ -202,8 +202,6 @@ def list_of_commands(key):
 
 def help():
     # clearing the screen
-    system('cls||clear')
-    void = ""
 
     help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
@@ -231,7 +229,7 @@ def help():
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
-    void = input("Press Enter to return to the game ...\n> ")
+    input("Press Enter to return to the game ...\n> ")
 
 def initiate():
     """
@@ -263,7 +261,6 @@ def main(game, player, level):
 
     while game_over == False:
         system('cls||clear')
-        temp = ""
         map = game.get_map()
 
         print_top_infobar(player)
@@ -271,8 +268,7 @@ def main(game, player, level):
         print_bottom_infobar(player, level)
         note_to_display.print_note()
         
-        temp = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
-        system('cls||clear')
+        validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
 
 
 initiate()
