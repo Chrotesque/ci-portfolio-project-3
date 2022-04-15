@@ -269,6 +269,7 @@ def main(game, player, level):
         note_to_display.print_note()
         
         validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
+        system('cls||clear')
 
 
 initiate()
