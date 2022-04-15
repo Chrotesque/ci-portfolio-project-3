@@ -41,13 +41,12 @@ COMMANDS = {
   "use":["use", "item"]
 }
 
-last_activity = "test"
-
 def welcome():
-    print(f"""{c.Fore.YELLOW}Hey there! Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}
-    
-Be sure to have a look at the help menu first, before you get started.
-    """)
+    """
+    Displays the welcome message at the start of the game
+    """
+    print(f"{c.Fore.YELLOW}Hey there! Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}\n")
+    print("Be sure to have a look at the help menu first, before you get started.\n")
 
 def validate_name():
     """
@@ -68,17 +67,32 @@ def validate_name():
     while name_chosen == False:
         # initial input
         if i == 0:
-
             player_input = input("To get started - what's your name?\n> ")
-        # reset input for additional attempts
-        else:
-            player_input = ""
 
-        # additional attempts
+        # no player input
         if not player_input:
             player_input = input("Are you sure you don't want to enter a name? You will get one either way.\n> ")
+            if not player_input:
+                name = names[randrange(0,len(names))]
+                note_to_display.modify_note(f"Have it your way, '{name}'!")
+                break
+            else:
+                name = player_input
+                note_to_display.modify_note("See? Wasn't that hard now, was it?")
+                break
+        # input too long
+        elif len(player_input) > 56:
+            player_input = input("That's a tad long, try something with less than 56 characters!\n> ")
+            if not player_input:
+                i += 1
+                continue
+            else:
+                i += 1
+                continue
+        # player input valid
         else:
             name = player_input
+            note_to_display.modify_note(f"Welcome {name}! Off to your death you go ...")
             break
 
         i += 1
