@@ -204,6 +204,7 @@ def help():
 
     # to stop the main loop from displaying the map
     input("Press Enter to return to the game ...\n")
+    system('cls||clear')
 
 def initiate():
     """
