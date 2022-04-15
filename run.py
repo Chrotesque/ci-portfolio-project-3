@@ -179,7 +179,7 @@ def help():
 
     note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
 
-    print(f"""
+    print(f""" 
     {c.Fore.YELLOW}Welcome to the help screen of Endless Dungeons on a Budget{c.Style.RESET_ALL}
 
         This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 

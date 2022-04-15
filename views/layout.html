@@ -28,8 +28,9 @@
         #terminal {
             width: 730px;
             background-color: black;
-            box-shadow: 0 0 5rem brown;
+            box-shadow: 0 0 5rem black, 0 0 8px black;
             padding: 1.5rem;
+            cursor: text;
         }
 
         .xterm {
@@ -169,6 +170,12 @@
             text-decoration: underline;
         }
 
+        #button-container {
+            display: flex;
+            justify-content: center;
+            margin: 3rem;
+        }
+
         button {
             width: 200px;
             height: 40px;
@@ -178,6 +185,20 @@
             text-transform: uppercase;
             margin: 10px;
             border-radius: 8px;
+            box-shadow: 0 0 3rem black, 0 0 5px black;
+        }
+
+        ::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #353535;
+            cursor: pointer;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #101010;
         }
     </style>
 </head>
