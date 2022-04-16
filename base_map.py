@@ -6,71 +6,9 @@ class BaseMap:
 
     global_map = []
     global_base = []
-    global_rooms = {
-            "closed":[],
-            "open":{
-                "all":[],
-                "main":[],
-                "branches":[]
-            }
-    }
+    global_rooms = {}
     global_level = 0
-    global_entities = {
-        "entry":{
-            "sym":"triright",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        },
-        "exit":{
-            "sym":"tridown",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        },
-        "player":{
-            "sym":"disc",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        },
-        "vendor":{
-            "sym":"hamburger",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        },
-        "enemy":{
-            "sym":"sword",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        },
-        "loot":{
-            "sym":"star",
-            "instance":[
-                {
-                    "draw":True,
-                    "coords":[]
-                }
-            ]
-        }
-    }
+    global_entities = {}
 
     def __init__(self, level):
         self.global_level = level
@@ -333,6 +271,75 @@ class BaseMap:
         """
         self.global_entities.get(entity)["instance"][instance]["coords"] = new_coords
 
+    def reset_globals(self):
+        """
+        This clears globals so that information is not kept in between level advancements
+        """
+        self.global_rooms = {
+            "closed":[],
+            "open":{
+                "all":[],
+                "main":[],
+                "branches":[]
+            }
+        }
+        self.global_entities = {
+            "entry":{
+                "sym":"triright",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            },
+            "exit":{
+                "sym":"tridown",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            },
+            "player":{
+                "sym":"disc",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            },
+            "vendor":{
+                "sym":"hamburger",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            },
+            "enemy":{
+                "sym":"sword",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            },
+            "loot":{
+                "sym":"star",
+                "instance":[
+                    {
+                        "draw":True,
+                        "coords":[]
+                    }
+                ]
+            }
+        }
+
     def get_map(self):
         """
         Returns global_map as finalized version of the current map including entities
@@ -344,6 +351,7 @@ class BaseMap:
         """
         Goes through all necessary methods to create a new map
         """
+        self.reset_globals()
         self.create_base_map()
         self.write_entry_coords()
         self.create_path()
