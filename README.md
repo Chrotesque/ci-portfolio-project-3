@@ -1,31 +1,40 @@
-![CI logo](https://codeinstitute.s3.amazonaws.com/fullstack/ci_logo_small.png)
+# **Portfolio Project 3 - Endless Dungeons on a Budget**
+## Python Game - <a href="https://chrotesque-ci-portfolio-3.herokuapp.com/" target="_blank">View deployed site here.</a>
 
-Welcome Chrotesque,
+![AmIResponsive](assets/images/readme/amiresponsive.jpg) 
 
-This is the Code Institute student template for deploying your third portfolio project, the Python command-line project. The last update to this file was: **August 17, 2021**
+<br>
 
-## Reminders
+# Table of Contents
 
-* Your code must be placed in the `run.py` file
-* Your dependencies must be placed in the `requirements.txt` file
-* Do not edit any of the other files or your code may not deploy properly
+1. [Overview](#overview-)
+2. [Logic](#logic-)
+3. [Features](#features-)
+4. [Technologies Used](#technologies-used-)
+5. [Validation and Testing](#validation-and-testing-)
+6. [Bugs](#bugs-)
+7. [Deployment](#deployment-)
+8. [Credits](#credits-)
+9. [Acknowledgements](#acknowledgements-)
 
-## Creating the Heroku app
+<br>
 
-When you create the app, you will need to add two buildpacks from the _Settings_ tab. The ordering is as follows:
+# **Overview** ([^](#table-of-contents))
 
-1. `heroku/python`
-2. `heroku/nodejs`
+Endless Dungeons on a budget is a Python terminal based dungeon crawler. The goal is to delve deeper and deeper while collecting loot, spending your gold with vendors and defeating enemies.
 
-You must then create a _Config Var_ called `PORT`. Set this to `8000`
+# **Logic** ([^](#table-of-contents))
 
-If you have credentials, such as in the Love Sandwiches project, you must create another _Config Var_ called `CREDS` and paste the JSON into the value field.
+# **Features** ([^](#table-of-contents))
 
-Connect your GitHub repository and deploy as normal.
+# **Technologies Used** ([^](#table-of-contents))
 
-## Constraints
+# **Validation and Testing** ([^](#table-of-contents))
 
-The deployment terminal is set to 80 columns by 24 rows. That means that each line of text needs to be 80 characters or less otherwise it will be wrapped onto a second line.
+# **Bugs** ([^](#table-of-contents))
 
------
-Happy coding!
+# **Deployment** ([^](#table-of-contents))
+
+# **Credits** ([^](#table-of-contents))
+
+# **Acknowledgements** ([^](#table-of-contents))
