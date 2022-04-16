@@ -210,7 +210,6 @@ def help():
     system('cls||clear')
 
     help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
-
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
     either give up or get yourself killed. Throughout you will find loot, 
@@ -242,7 +241,7 @@ def next_level(game):
     """
     Increases the level of a running game
     """
-    new_level = game.LEVEL + 10
+    new_level = game.global_level + 1
     game = base_map.BaseMap(new_level)
     game.build_map()
     map = game.get_map()
@@ -276,8 +275,8 @@ def main(game):
         map = game.get_map()
 
         print_top_infobar()
-        vis_map.VisibleMap(map).display_map(game.ENTITIES["player"]["instance"][0]["coords"])
-        print_bottom_infobar(game.LEVEL)
+        vis_map.VisibleMap(map).display_map(game.global_entities["player"]["instance"][0]["coords"])
+        print_bottom_infobar(game.global_level)
         global_notification.print_note()
         
         game_status = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
