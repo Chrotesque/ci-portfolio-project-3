@@ -234,6 +234,23 @@ class BaseMap:
         """
         Writes the gold loot coords to global_entities       
         """
+        coords_list = []
+
+        cutoff = randrange(1,4)
+        for i in range(randrange(3,7)):
+            main_amt = len(self.global_rooms["open"]["main"])
+            branch_amt = len(self.global_rooms["open"]["branches"])
+            if i < cutoff:
+                coords_list.append(self.global_rooms["open"]["main"][randrange(0,main_amt)])
+            else:
+                coords_list.append(self.global_rooms["open"]["branches"][randrange(0,branch_amt)])
+
+        for i in range(len(coords_list)):
+            entity_to_add = {
+                "draw":True,
+                "coords":coords_list[i]
+            }
+            self.global_entities["loot"]["instance"].append(entity_to_add)
 
     def write_loot_coords(self):
         """
@@ -357,4 +374,6 @@ class BaseMap:
         self.create_path()
         self.create_closed_room_list()
         self.create_branches()
+
+        self.write_gold_coords()
         self.place_entities()
