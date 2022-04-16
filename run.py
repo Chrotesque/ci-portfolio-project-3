@@ -153,6 +153,10 @@ def entity_interaction(entity, game):
         global_player.add_gold(amount)
         global_notification.modify_note(f"You found {amount} gold!")
 
+    if entity[0] == game.global_entities["enemy"]["sym"]:
+
+        global_notification.modify_note(f"You fought and defeated: {utils.generate_enemy_name()}!")
+
 
 
 def print_top_infobar():

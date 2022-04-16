@@ -1,5 +1,5 @@
 # Import of 3rd party modules
-import random
+from random import randrange
 import numpy.random as np
 
 ROW_INC = 4
@@ -14,7 +14,7 @@ def sym(symbol):
         "tridown":"\u25bc",
         "triright":"\u25ba",
         "disc":"\u25cf",
-        "player":"\u260a",
+        "player":"\u1338",
         "heart":"\u2665",
         "sword":"\u2694",
         "death":"\u2620",
@@ -59,7 +59,7 @@ def get_entry_side(lane):
     """
     Decides the lane side for lanes 2 & 3
     """
-    rand_num = random.randrange(1,3)
+    rand_num = randrange(1,3)
     if lane == 2:
         if rand_num > 1:
             side = 3 # lane 2 top
@@ -196,5 +196,63 @@ def next_coordinate(coords, direction):
         coords[1] -= 1
     return coords
 
+def generate_enemy_name():
+    """
+    Generates and returns a random enemy name
+    """
+    prefix = [
+        "Dirty",
+        "Well-groomed",
+        "Oozing",
+        "Ugly",
+        "Brown",
+        "Crazed",
+        "Shadowy",
+        "Awful",
+        "Angry",
+        "Nasty",
+        "Black",
+        "Green",
+        "Rabid",
+        "Gruesome",
+        "Grim",
+        "Monstrous"
 
+    ]
+    enemy = [
+        "Goblin",
+        "Spider",
+        "Cave-Goblin",
+        "Oversized Rat",
+        "Boneling",
+        "Fogling",
+        "Murkfiend",
+        "Vampire",
+        "Bear",
+        "Horror",
+        "Bat",
+        "Lizard",
+        "Animated Rock",
+        "Mutant",
+        "Flayer",
+        "Golem",
+        "Blob",
+        "Serpent",
+        "Wraith",
+        "Detached Limb",
+        "Odd Sheep",
+        "Brute"
+    ]
+
+    rand_prefix = randrange(0,len(prefix))
+    rand_enemy = randrange(0,len(enemy))
+    rand_num = randrange(1,5)
+    prefix_str = prefix[rand_prefix]
+    enemy_str = enemy[rand_enemy]
+
+    if rand_num > 1:
+        prefix_str = f"{str(rand_num)} {prefix_str}"
+        enemy_str = f"{enemy_str}s"
+    
+    return " ".join([prefix_str, enemy_str])
 #

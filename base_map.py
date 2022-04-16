@@ -1,6 +1,7 @@
 from random import randrange
 import colorama as c
 import utils
+import math
 
 class BaseMap:
 
@@ -236,9 +237,10 @@ class BaseMap:
         Writes the gold loot coords to global_entities       
         """
         coords_list = []
+        max_num = min(round((self.global_level/25 + 1) *5), 10)
 
         cutoff = randrange(1,4)
-        for i in range(randrange(3,7)):
+        for i in range(randrange(3,max_num)):
             main_amt = len(self.global_rooms["open"]["main"])
             branch_amt = len(self.global_rooms["open"]["branches"])
             if i < cutoff:
@@ -266,6 +268,28 @@ class BaseMap:
         """
         Writes the enemy coords to global_entities 
         """
+        coords_list = []
+        max_num = min(round(((self.global_level/2.5)/6 + 1) *5), 12)
+
+        cutoff = math.ceil(max_num/2)
+        for i in range(randrange(cutoff-1, max_num)):
+            main_amt = len(self.global_rooms["open"]["main"])
+            branch_amt = len(self.global_rooms["open"]["branches"])
+            if i < cutoff:
+                rand_coord = self.global_rooms["open"]["main"][randrange(0,main_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["main"].remove(rand_coord)
+            else:
+                rand_coord = self.global_rooms["open"]["branches"][randrange(0,branch_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["branches"].remove(rand_coord)
+
+        for i in range(len(coords_list)):
+            entity_to_add = {
+                "draw":True,
+                "coords":coords_list[i]
+            }
+            self.global_entities["enemy"]["instance"].append(entity_to_add)
 
     def write_vendor_coords(self):
         """
@@ -389,6 +413,7 @@ class BaseMap:
         """
         Goes through all necessary methods to create a new map
         """
+        # map creation
         self.reset_globals()
         self.create_base_map()
         self.write_entry_coords()
@@ -396,5 +421,7 @@ class BaseMap:
         self.create_closed_room_list()
         self.create_branches()
 
+        # entities
         self.write_gold_coords()
+        self.write_enemy_coords()
         self.place_entities()
