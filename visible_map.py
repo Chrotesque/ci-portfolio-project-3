@@ -35,41 +35,44 @@ class VisibleMap:
         Adds the portion the player is in as visible to the global_mask
         """
         replacer = "O", "O", "O", "O", "O"
-        if coords[0] == 1:
-            list_map = list(self.global_mask[coords[0]])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]] = "".join(list_map)
 
-            list_map = list(self.global_mask[coords[0]+1])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]+1] = "".join(list_map)
-        elif coords[0] == 9:
-            list_map = list(self.global_mask[coords[0]])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]] = "".join(list_map)
+        iterations = 2 if not coords[0] == 1 and not coords[0] == 9 else 1
+        for i in range(iterations):
 
-            list_map = list(self.global_mask[coords[0]-1])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]-1] = "".join(list_map)
-        else:
-            list_map = list(self.global_mask[coords[0]+1])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]+1] = "".join(list_map)
+            if iterations == 1:
+                if coords[0] == 1:
+                    factor = -1
+                else: 
+                    factor = 1
+            else:
+                if i == 0:
+                    factor = -1
+                else:
+                    factor = 1 
 
-            list_map = list(self.global_mask[coords[0]])
+            # top & bottom
+            list_map = list(self.global_mask[coords[0]-(1*factor)])
+            list_upmap = list(self.global_mask[coords[0]-(2*factor)])
+            list_actmap = list(self.map[coords[0]-(1*factor)])
             del list_map[coords[1]-2:coords[1]+3]
             list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]] = "".join(list_map)
 
-            list_map = list(self.global_mask[coords[0]-1])
-            del list_map[coords[1]-2:coords[1]+3]
-            list_map[coords[1]-2:coords[1]-2] = replacer
-            self.global_mask[coords[0]-1] = "".join(list_map)
+            list_upmap[coords[1]] = "O" if list_actmap[coords[1]] == " " else list_upmap[coords[1]]
+            self.global_mask[coords[0]-(2*factor)] = "".join(list_upmap)
+            self.global_mask[coords[0]-(1*factor)] = "".join(list_map)
+
+        # middle
+        list_map = list(self.global_mask[coords[0]])
+        list_actmap = list(self.map[coords[0]])
+        del list_map[coords[1]-2:coords[1]+3]
+        list_map[coords[1]-2:coords[1]-2] = replacer
+
+        list_map[coords[1]-4] = "O" if list_actmap[coords[1]-2] == " " else list_map[coords[1]-4]
+        if coords[1] < 75:
+            list_map[coords[1]+4] = "O" if list_actmap[coords[1]+2] == " " else list_map[coords[1]+4]
+
+        self.global_mask[coords[0]] = "".join(list_map)
+
 
     def reveal_map(self):
         """
@@ -102,6 +105,10 @@ class VisibleMap:
             sym("triright"):{
                 "Fore":"MAGENTA",
                 "Back":"RESET"
+            },
+            sym("star"):{
+                "Fore":"YELLOW",
+                "Back":"RESET"
             }
         }
         col_key = list(colorization.keys())
@@ -133,3 +140,6 @@ class VisibleMap:
 
         for i in range(len(self.map)):
             print(self.map[i])
+
+        #for i in range(len(self.global_mask)):
+        #    print(self.global_mask[i])
