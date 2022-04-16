@@ -1,5 +1,5 @@
 import colorama as c
-from func import sym
+from utils import sym
 
 class VisibleMap:
 

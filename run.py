@@ -2,7 +2,7 @@
 from random import randrange
 from os import system
 import colorama as c
-import func
+import utils
 import base_map
 import visible_map as vis_map
 import entity
@@ -34,10 +34,10 @@ COMMANDS = {
   "help":["help","halp","hlp","h"],
   "restart":["again", "redo", "restart"],
   "move":{
-    "w":f"You moved a room to the north {func.sym('dir_north')}",
-    "s":f"You moved a room to the south {func.sym('dir_south')}",
-    "a":f"You moved a room to the west {func.sym('dir_west')}",
-    "d":f"You moved a room to the east {func.sym('dir_east')}"
+    "w":f"You moved a room to the north {utils.sym('dir_north')}",
+    "s":f"You moved a room to the south {utils.sym('dir_south')}",
+    "a":f"You moved a room to the west {utils.sym('dir_west')}",
+    "d":f"You moved a room to the east {utils.sym('dir_east')}"
   },
   "use":["use", "item"]
 }
@@ -164,7 +164,7 @@ def print_top_infobar():
 
     # adding full health bar pieces
     for i in range(cur):
-        player_info.append(c.Fore.RED + func.sym("square") + c.Style.RESET_ALL)
+        player_info.append(c.Fore.RED + utils.sym("square") + c.Style.RESET_ALL)
         i += 1
 
     # adding empty health bar pieces
@@ -188,7 +188,7 @@ def print_bottom_infobar(level):
     for i in range(front_gap):
         bottom_info.append(" ")
 
-    front_text = f"{c.Fore.YELLOW}{func.sym('star')} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
+    front_text = f"{c.Fore.YELLOW}{utils.sym('star')} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
     back_text = "Level " + str(level)
 
     bottom_info.append(front_text)
@@ -209,16 +209,14 @@ def help():
     # clearing the screen
     system('cls||clear')
 
-    help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
-    This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
+    help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}\n
+    This game is quite simple. You ({c.Fore.GREEN}{utils.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
     either give up or get yourself killed. Throughout you will find loot, 
-    monsters, etc.
-
+    monsters, etc.\n
     The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
     L1 is the safest lane, L3 the hardest. It depends on you to choose
-    which lanes to stick to. That is if the dungeon gives you a choice.
-
+    which lanes to stick to. That is if the dungeon gives you a choice.\n
     The following actions are available to you:
     - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
         > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}

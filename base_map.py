@@ -1,6 +1,6 @@
 from random import randrange
 import colorama as c
-import func
+import utils
 
 class BaseMap:
 
@@ -74,8 +74,8 @@ class BaseMap:
 
     def __init__(self, level):
         self.global_level = level
-        self.lane = func.get_entry_lane(self.global_level)
-        self.side = func.get_entry_side(self.lane)
+        self.lane = utils.get_entry_lane(self.global_level)
+        self.side = utils.get_entry_side(self.lane)
 
     def set_base_map(self):
         """
@@ -113,17 +113,17 @@ class BaseMap:
         """
         Creates and sets the main path through the level
         """
-        prev_coords = [func.lane_to_xcoord(self.side),0]
+        prev_coords = [utils.lane_to_xcoord(self.side),0]
         readable_coords = prev_coords[:]
 
         # loop until path reaches the end of the map
         while readable_coords[1] < 18:
-            path = func.get_path_options(prev_coords, readable_coords, True, True)
+            path = utils.get_path_options(prev_coords, readable_coords, True, True)
             prev_coords = readable_coords[:]
-            real_coords = func.get_coords(readable_coords)
+            real_coords = utils.get_coords(readable_coords)
             self.global_rooms["open"]["main"].append(real_coords)
             self.global_rooms["open"]["all"].append(real_coords)
-            readable_coords = func.next_coordinate(readable_coords, path)
+            readable_coords = utils.next_coordinate(readable_coords, path)
             self.remove_wall(real_coords, path)
             if readable_coords[1] == 18:
                 self.set_exit_coords(real_coords)
@@ -140,26 +140,26 @@ class BaseMap:
             prev_coords = self.global_rooms["closed"][randrange(0,len(self.global_rooms["closed"]))]
             self.global_rooms["closed"].remove(prev_coords)
             new_open_rooms.append(prev_coords)
-            prev_coords = func.get_coords(prev_coords, True)
+            prev_coords = utils.get_coords(prev_coords, True)
             readable_coords = prev_coords[:]
             
             finish = False
             # carve out a branch until an open room is hit
             while finish == False:
-                branch = func.get_path_options(prev_coords, readable_coords, False, False)
+                branch = utils.get_path_options(prev_coords, readable_coords, False, False)
                 prev_coords = readable_coords[:]
-                real_coords = func.get_coords(readable_coords)
-                readable_coords = func.next_coordinate(readable_coords, branch) 
+                real_coords = utils.get_coords(readable_coords)
+                readable_coords = utils.next_coordinate(readable_coords, branch) 
                 # next room is on closed room list
-                if func.get_coords(readable_coords) in self.global_rooms["closed"]:
-                    self.global_rooms["closed"].remove(func.get_coords(readable_coords))
-                    new_open_rooms.append(func.get_coords(readable_coords))
+                if utils.get_coords(readable_coords) in self.global_rooms["closed"]:
+                    self.global_rooms["closed"].remove(utils.get_coords(readable_coords))
+                    new_open_rooms.append(utils.get_coords(readable_coords))
                     self.remove_wall(real_coords, branch)
                 # next room was on closed room list and already opened up
-                elif func.get_coords(readable_coords) in new_open_rooms:
+                elif utils.get_coords(readable_coords) in new_open_rooms:
                     continue
                 # next room is on open room list
-                elif func.get_coords(readable_coords) in self.global_rooms["open"]["all"]:
+                elif utils.get_coords(readable_coords) in self.global_rooms["open"]["all"]:
                     self.remove_wall(real_coords, branch)
                     finish = True
                     break
@@ -208,7 +208,7 @@ class BaseMap:
         for i in range(5):
             # for each column
             for j in range(18):
-                coords = func.get_coords([i,j])
+                coords = utils.get_coords([i,j])
                 top = list(self.global_base[coords[0]-1])
                 mid = list(self.global_base[coords[0]])
                 bot = list(self.global_base[coords[0]+1])
@@ -286,7 +286,7 @@ class BaseMap:
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
                 # level advancement
-            elif map[coords[1]+2] == func.sym("tridown"):
+            elif map[coords[1]+2] == utils.sym("tridown"):
                 return 2
             else:
                 return 0
@@ -310,7 +310,7 @@ class BaseMap:
             for i in range(len(self.global_entities[item]["instance"])):
                 if self.global_entities[item]["instance"][i]["coords"]: #change to draw later
                     draw = list(self.global_map[self.global_entities[item]["instance"][i]["coords"][0]])
-                    draw[self.global_entities[item]["instance"][i]["coords"][1]] = func.sym(self.global_entities[item]["sym"])
+                    draw[self.global_entities[item]["instance"][i]["coords"][1]] = utils.sym(self.global_entities[item]["sym"])
                     self.global_map[self.global_entities[item]["instance"][i]["coords"][0]] = "".join(draw)
 
     def get_map(self):
