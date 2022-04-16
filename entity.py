@@ -12,6 +12,9 @@ class Player(Entity):
         self.hp_max = hp_max
         self.gold = gold
 
+    def add_gold(self, amount):
+        self.gold += amount
+
 
 class Enemy(Entity):
 

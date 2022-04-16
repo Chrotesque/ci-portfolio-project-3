@@ -122,17 +122,38 @@ def validate_input(command, game):
             move = game.attempt_move("player", 0, command)
             if move == 1:
                 global_notification.modify_note(f"{COMMANDS['move'].get(command)}")
+                entity = game.identify_entity()
+                if entity:
+                    entity_interaction(entity, game)
             elif move == 0:
                 global_notification.modify_note("You can't go there.")
             else: # move == 2
                 global_notification.modify_note("Once you descended the stairway, the way closed up behind you. Bummer!")
                 return move
 
+        elif not command:
+            global_notification.modify_note("Well you have to write something at least!")
         else:
             global_notification.modify_note(f"I'm afraid '{command}' does not compute!")
         return 0
     except:
         global_notification.modify_note("Program error, the developer screwed up! Try restarting the game.")
+
+def entity_interaction(entity, game):
+    """
+
+    """
+    lane_factor = utils.return_lane(entity[1])
+
+    if entity[0] == game.global_entities["loot"]["sym"]:
+        
+        min_amount = round(5 * (1 + (game.global_level/10)/6))
+        max_amount = round(10 * (1 + (game.global_level/10)/3))
+        amount = round(randrange(min_amount,max_amount) * (1 + lane_factor))
+        global_player.add_gold(amount)
+        global_notification.modify_note(f"You found {amount} gold!")
+
+
 
 def print_top_infobar():
     """
@@ -173,7 +194,7 @@ def print_top_infobar():
 
     print("".join(player_info))
 
-def print_bottom_infobar(level):
+def print_bottom_infobar(game):
     """
     Prints the level at the bottom right of the map
     """
@@ -185,8 +206,8 @@ def print_bottom_infobar(level):
     for i in range(front_gap):
         bottom_info.append(" ")
 
-    front_text = f"{c.Fore.YELLOW}{utils.sym('star')} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
-    back_text = "Level " + str(level)
+    front_text = f"{c.Fore.YELLOW}{utils.sym(game.global_entities['loot']['sym'])} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
+    back_text = "Level " + str(game.global_level)
 
     bottom_info.append(front_text)
     for i in range(screen_length - len(front_text)+9 - len(back_text)):
@@ -268,10 +289,10 @@ def main(game):
     while game_status == 0:
         #system('cls||clear')
         map = game.get_map()
-
+        entities = game.get_entities()
         print_top_infobar()
-        vis_map.VisibleMap(map).display_map(game.global_entities["player"]["instance"][0]["coords"])
-        print_bottom_infobar(game.global_level)
+        vis_map.VisibleMap(map).display_map(game.global_entities["player"]["instance"][0]["coords"], entities)
+        print_bottom_infobar(game)
         global_notification.print_note()
         
         game_status = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)

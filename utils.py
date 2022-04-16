@@ -14,11 +14,13 @@ def sym(symbol):
         "tridown":"\u25bc",
         "triright":"\u25ba",
         "disc":"\u25cf",
+        "player":"\u260a",
         "heart":"\u2665",
         "sword":"\u2694",
         "death":"\u2620",
         "hamburger":"\u1f354",
-        "star":"\u2605",
+        "fivestar":"\u2605",
+        "fourstar":"\u2726",
         "dir_west":"\u25c1",
         "dir_east":"\u25b7",
         "dir_north":"\u25b3",
@@ -41,6 +43,17 @@ def get_entry_lane(level):
     lane = np.choice(lanes, 1, p=probabilities)
 
     return lane
+
+def return_lane(coords):
+    """
+    Returns the lane (1, 2 or 3) depending on a given coordinate
+    """
+    if coords[0] == 1 or coords[0] == 9:
+        return 0.5
+    elif coords[0] == 3 or coords[0] == 7:
+        return 0.25
+    else:
+        return 0
 
 def get_entry_side(lane):
     """

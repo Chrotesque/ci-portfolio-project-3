@@ -83,30 +83,19 @@ class VisibleMap:
                     list_map[j] = " "
             self.global_visible[i] = "".join(list_map)
 
-    def colorize_map(self):
+    def colorize_map(self, entities):
         """
         Adds colors to certain elements of the visible map
         """
-        colorization = {
-            sym("disc"):{
-                "Fore":"GREEN",
-                "Back":"RESET"
-            },
-            sym("tridown"):{
-                "Fore":"MAGENTA",
-                "Back":"RESET"
-            },
-            sym("triright"):{
-                "Fore":"MAGENTA",
-                "Back":"RESET"
-            },
-            sym("star"):{
-                "Fore":"YELLOW",
-                "Back":"RESET"
-            }
-        }
-        col_key = list(colorization.keys())
-        col_val = list(colorization.values()) 
+        sym_list = []
+        col_list = []
+        for item in entities:
+            col_dict = {}
+            sym_list.append(sym(entities.get(item)["sym"]))
+            col_dict["Fore"] = entities.get(item)["Fore"]
+            col_dict["Back"] = entities.get(item)["Back"]
+            col_list.append(col_dict)
+
         # for each line of the map list
         for i in range(len(self.global_visible)):
             # exclude all irrelevant lines
@@ -114,21 +103,21 @@ class VisibleMap:
                 list_map = list(self.global_visible[i])
                 # for each item in current map rows list
                 for j in range(len(list_map)):
-                    # for each item in colorization dict
-                    for k in range(len(col_key)):
+                    # for each item in entities dict
+                    for k in range(len(sym_list)):
                         # if a match is found, change it according to the colorize dict
-                        if list_map[j] == col_key[k]:
-                            list_map[j] = getattr(c.Fore, col_val[k]["Fore"]) + getattr(c.Back, col_val[k]["Back"]) + col_key[k] + c.Style.RESET_ALL
+                        if list_map[j] == sym_list[k]:
+                            list_map[j] = getattr(c.Fore, col_list[k]["Fore"]) + getattr(c.Back, col_list[k]["Back"]) + sym_list[k] + c.Style.RESET_ALL
                 # convert from list to string again
                 self.global_visible[i] = "".join(list_map)
 
-    def display_map(self, coords):
+    def display_map(self, coords, entities):
         """
         Displays the map after formatting (like colorization) is finished
         """
         self.reveal_area(coords)
         self.reveal_map()
-        self.colorize_map()
+        self.colorize_map(entities)
         for i in range(len(self.global_visible)):
             print(self.global_visible[i])
 

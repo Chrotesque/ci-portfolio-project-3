@@ -215,10 +215,19 @@ class BaseMap:
         """
         Identifies and returns entity on players position
         """
-        #sym = self.global_entities["player"]["instance"][0]["coords"]
+        coords = self.global_entities["player"]["instance"][0]["coords"]
+        list_map = list(self.global_map[coords[0]])
+        sym = list_map[coords[1]]
+
         for item in self.global_entities:
-            if utils.sym(self.global_entities.get(item)['sym']) == sym:
-                return self.global_entities.get(item)
+            reference = self.global_entities.get(item)
+            if utils.sym(reference['sym']) == sym:
+
+                for i in range(len(reference["instance"])):
+                    if coords == reference["instance"][i]["coords"]:
+                        reference["instance"][i]["draw"] = False
+
+                return [self.global_entities.get(item)['sym'], coords]
                 break
 
 
@@ -269,10 +278,10 @@ class BaseMap:
         """
         # copies the base map 
         self.global_map = self.global_base[:]
-        # completes the map with entities
+        # fills the map with all entities that have coordinates and should be drawn
         for item in self.global_entities:
             for i in range(len(self.global_entities[item]["instance"])):
-                if self.global_entities[item]["instance"][i]["coords"]: #check if to draw it at all
+                if self.global_entities[item]["instance"][i]["coords"] and self.global_entities[item]["instance"][i]["draw"]:
                     draw = list(self.global_map[self.global_entities[item]["instance"][i]["coords"][0]])
                     draw[self.global_entities[item]["instance"][i]["coords"][1]] = utils.sym(self.global_entities[item]["sym"])
                     self.global_map[self.global_entities[item]["instance"][i]["coords"][0]] = "".join(draw)
@@ -299,6 +308,8 @@ class BaseMap:
         self.global_entities = {
             "entry":{
                 "sym":"triright",
+                "Fore":"MAGENTA",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -308,6 +319,8 @@ class BaseMap:
             },
             "exit":{
                 "sym":"tridown",
+                "Fore":"MAGENTA",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -316,7 +329,9 @@ class BaseMap:
                 ]
             },
             "player":{
-                "sym":"disc",
+                "sym":"player",
+                "Fore":"GREEN",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -326,6 +341,8 @@ class BaseMap:
             },
             "vendor":{
                 "sym":"hamburger",
+                "Fore":"CYAN",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -335,6 +352,8 @@ class BaseMap:
             },
             "enemy":{
                 "sym":"sword",
+                "Fore":"RED",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -343,7 +362,9 @@ class BaseMap:
                 ]
             },
             "loot":{
-                "sym":"star",
+                "sym":"disc",
+                "Fore":"YELLOW",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -359,6 +380,10 @@ class BaseMap:
         """
         self.place_entities()
         return self.global_map
+
+    def get_entities(self):
+
+        return self.global_entities
 
     def build_map(self):
         """
