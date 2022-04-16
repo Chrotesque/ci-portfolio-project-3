@@ -14,6 +14,7 @@ class BaseMap:
                 "branches":[]
             }
     }
+    LEVEL = 0
     ENTITIES = {
         "entry":{
             "sym":"triright",
@@ -72,8 +73,8 @@ class BaseMap:
     }
 
     def __init__(self, level):
-        self.level = level
-        self.lane = func.get_entry_lane(self.level)
+        self.LEVEL = level
+        self.lane = func.get_entry_lane(self.LEVEL)
         self.side = func.get_entry_side(self.lane)
 
     def set_base_map(self):
@@ -255,37 +256,40 @@ class BaseMap:
         """
         coords = self.ENTITIES.get(entity)["instance"][instance]["coords"]
         if direction == "w":
-            map = list(self.BASE[coords[0]-1])
+            map = list(self.MAP[coords[0]-1])
             if map[coords[1]] == " ":
                 new_coords = [coords[0]-2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
-                return True
+                return 1
             else:
-                return False
+                return 0
         elif direction == "s":
-            map = list(self.BASE[coords[0]+1])
+            map = list(self.MAP[coords[0]+1])
             if map[coords[1]] == " ":
                 new_coords = [coords[0]+2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
-                return True
+                return 1
             else:
-                return False
+                return 0
         elif direction == "a":
-            map = list(self.BASE[coords[0]])
+            map = list(self.MAP[coords[0]])
             if map[coords[1]-2] == " ":
                 new_coords = [coords[0], coords[1]-4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
-                return True
+                return 1
             else:
-                return False
+                return 0
         elif direction == "d":
-            map = list(self.BASE[coords[0]])
+            map = list(self.MAP[coords[0]])
             if map[coords[1]+2] == " ":
                 new_coords = [coords[0], coords[1]+4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
-                return True
+                return 1
+                # level advancement
+            elif map[coords[1]+2] == func.sym("tridown"):
+                return 2
             else:
-                return False
+                return 0
 
 
     def update_entity_coords(self, entity, instance, old_coords, new_coords):

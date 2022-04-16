@@ -32,6 +32,7 @@ def get_entry_lane(level):
     Chooses the level entry lane based on a probability and level
     """
     lanes = [1,2,3]
+    level = 11 if level > 11 else level
     probabilities = [
         1 - 0.06 * (level-1),
         0 + 0.04 * (level-1),

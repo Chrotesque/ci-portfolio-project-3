@@ -9,10 +9,10 @@ import entity
 
 class Notifications:
 
-    note_to_display = "..."
+    global_notification = "..."
 
     def modify_note(self, note):
-        self.note_to_display = note
+        self.global_notification = note
 
     def print_note(self):
         """
@@ -25,9 +25,10 @@ class Notifications:
 
         print("\n")
         print(f"{string}{c.Fore.YELLOW}Narrator:{c.Style.RESET_ALL}")
-        print(f"{string}{self.note_to_display}\n")
+        print(f"{string}{self.global_notification}\n")
 
-note_to_display = Notifications()
+global_notification = Notifications()
+global_player = entity.Player("", 5, 10, 2, 0)
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -74,11 +75,11 @@ def validate_name():
             player_input = input("Are you sure you don't want to enter a name? You will get one either way.\n> ")
             if not player_input:
                 name = names[randrange(0,len(names))]
-                note_to_display.modify_note(f"Have it your way, '{name}'!")
+                global_notification.modify_note(f"Have it your way, '{name}'!")
                 break
             else:
                 name = player_input
-                note_to_display.modify_note("See? Wasn't that hard now, was it?")
+                global_notification.modify_note("See? Wasn't that hard now, was it?")
                 break
         # input too long
         elif len(player_input) > 50:
@@ -92,7 +93,7 @@ def validate_name():
         # player input valid
         else:
             name = player_input
-            note_to_display.modify_note(f"Welcome {name}! Off to your death you go ...")
+            global_notification.modify_note(f"Welcome {name}! Off to your death you go ...")
             break
 
         i += 1
@@ -119,23 +120,27 @@ def validate_input(command, game):
         elif command in COMMANDS["move"]:
         
             move = game.attempt_move("player", 0, command)
-            if move:
-                note_to_display.modify_note(f"{COMMANDS['move'].get(command)}")
-            else:
-                note_to_display.modify_note("You can't go there.")
+            if move == 1:
+                global_notification.modify_note(f"{COMMANDS['move'].get(command)}")
+            elif move == 0:
+                global_notification.modify_note("You can't go there.")
+            else: # move == 2
+                global_notification.modify_note("Congratulations! Deeper we go ...")
+                return 2
 
         else:
-            note_to_display.modify_note(f"I'm afraid '{command}' does not compute!")
+            global_notification.modify_note(f"I'm afraid '{command}' does not compute!")
+        return 0
     except:
-        note_to_display.modify_note("Program error, the developer screwed up! Try restarting the game.")
+        global_notification.modify_note("Program error, the developer screwed up! Try restarting the game.")
 
-def print_top_infobar(player):
+def print_top_infobar():
     """
     Prints the players health bar at the top right of the map
     """
-    max = player.hp_max
-    cur = player.hp_cur
-    name = player.name
+    max = global_player.hp_max
+    cur = global_player.hp_cur
+    name = global_player.name
     health_string = "Health "
 
     front_gap = 5
@@ -171,7 +176,7 @@ def print_top_infobar(player):
 
     print("".join(player_info))
 
-def print_bottom_infobar(player, level):
+def print_bottom_infobar(level):
     """
     Prints the level at the bottom right of the map
     """
@@ -183,7 +188,7 @@ def print_bottom_infobar(player, level):
     for i in range(front_gap):
         bottom_info.append(" ")
 
-    front_text = f"{c.Fore.YELLOW}{func.sym('star')} Gold: {str(player.gold)}{c.Style.RESET_ALL}"
+    front_text = f"{c.Fore.YELLOW}{func.sym('star')} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
     back_text = "Level " + str(level)
 
     bottom_info.append(front_text)
@@ -205,6 +210,7 @@ def help():
     system('cls||clear')
 
     help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}
+
     This game is quite simple. You ({c.Fore.GREEN}{func.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
     either give up or get yourself killed. Throughout you will find loot, 
@@ -227,10 +233,22 @@ def help():
 
     print(help_text)
 
-    note_to_display.modify_note("Now that you're done with the help screen, shall we move on?")
+    global_notification.modify_note("Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
     input("Press Enter to return to the game ...\n> ")
+
+def next_level(game):
+    """
+    Increases the level of a running game
+    """
+    new_level = game.LEVEL + 10
+    game = base_map.BaseMap(new_level)
+    game.build_map()
+    map = game.get_map()
+    vis_map.VisibleMap(map).set_mask()
+
+    main(game)
 
 def initiate():
     """
@@ -238,38 +256,36 @@ def initiate():
     """
     welcome()
     name = validate_name()
-    player = entity.Player(name, 5, 10, 2, 0)
-    level = 10
-    game = base_map.BaseMap(level)
+    global_player.name = name
+    game = base_map.BaseMap(1)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
 
-    main(game, player, level)
+    main(game)
 
-def new_level(level):
-    """
-    Increases the level of a running game
-    """
-    new_level = level+1
-
-def main(game, player, level):
+def main(game):
     """
     Game Logic Loop
     """
 
-    game_over = False
+    game_status = 0
 
-    while game_over == False:
+    while game_status == 0:
         system('cls||clear')
         map = game.get_map()
 
-        print_top_infobar(player)
-        vis_map.VisibleMap(map).display_map(base_map.BaseMap.ENTITIES["player"]["instance"][0]["coords"])
-        print_bottom_infobar(player, level)
-        note_to_display.print_note()
+        print_top_infobar()
+        vis_map.VisibleMap(map).display_map(game.ENTITIES["player"]["instance"][0]["coords"])
+        print_bottom_infobar(game.LEVEL)
+        global_notification.print_note()
         
-        validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
+        game_status = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
 
+    if game_status == 2:
+        next_level(game)
+
+    if game_status == 1:
+        game_over()
 
 initiate()

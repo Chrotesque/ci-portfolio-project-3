@@ -13,6 +13,7 @@ class VisibleMap:
         """
         Creates the initial MASK
         """
+        self.MASK.clear()
         for i in range(11):
             if i == 0 or i == 10:
                 list_map = list(self.map[i])
