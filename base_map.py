@@ -65,6 +65,9 @@ class BaseMap:
             self.remove_wall(real_coords, path)
             if readable_coords[1] == 18:
                 self.write_exit_coords(real_coords)
+                # remove player starting position so entities cannot be placed in the same spot
+                self.global_rooms["open"]["main"].remove(utils.get_coords([utils.lane_to_xcoord(self.side),0]))
+                self.global_rooms["open"]["all"].remove(utils.get_coords([utils.lane_to_xcoord(self.side),0]))
 
     def create_branches(self):
         """
