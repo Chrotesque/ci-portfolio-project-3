@@ -77,9 +77,9 @@ class BaseMap:
         self.lane = utils.get_entry_lane(self.global_level)
         self.side = utils.get_entry_side(self.lane)
 
-    def set_base_map(self):
+    def create_base_map(self):
         """
-        Creates the base map layout in list format
+        Creates and writes the base map layout in list format to global_base
         """
         self.global_base = [
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+",
@@ -95,23 +95,23 @@ class BaseMap:
         "     +===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+===+"
         ]
 
-    def set_entry_coords(self):
+    def write_entry_coords(self):
         """
-        Writes the entry & player coordinates (as they're always linked)
-        to global_entities 
+        Writes the entry & player coords (as they're always linked) to global_entities
         """
         self.global_entities["entry"]["instance"][0]["coords"] = [self.side, 5]
         self.global_entities["player"]["instance"][0]["coords"] = [self.side, 7]
 
-    def set_exit_coords(self, coords):
+    def write_exit_coords(self, coords):
         """
-        Writes the exit coordinates into global_entities at the main paths end
+        Writes the exit coords into global_entities at the main paths end
         """
         self.global_entities["exit"]["instance"][0]["coords"] = [coords[0], coords[1]+2]
 
-    def set_path(self):
+    def create_path(self):
         """
-        Creates and sets the main path through the level
+        Creates and writes main path to global_base by wall removal and writes coords of 
+        open rooms to global_rooms
         """
         prev_coords = [utils.lane_to_xcoord(self.side),0]
         readable_coords = prev_coords[:]
@@ -126,12 +126,12 @@ class BaseMap:
             readable_coords = utils.next_coordinate(readable_coords, path)
             self.remove_wall(real_coords, path)
             if readable_coords[1] == 18:
-                self.set_exit_coords(real_coords)
+                self.write_exit_coords(real_coords)
 
-    def set_branches(self):
+    def create_branches(self):
         """
-        Creates and sets a variable amount of branches through the level until they hit an 
-        open room
+        Creates and writes a variable amount of branches until they hit an open room to
+        global_base by wall removal and writes coords of open rooms to global_rooms
         """
         branch_amount = 0
         while branch_amount < 4:
@@ -177,7 +177,7 @@ class BaseMap:
 
     def remove_wall(self, coords, side, replacer=" "):
         """
-        Removes a wall of a given side based off of coordinates
+        Removes a wall of a given side based off of coordinates and writes to global_base
         """
         if side == "up":
             wall = list(self.global_base[coords[0]-1])
@@ -200,9 +200,10 @@ class BaseMap:
             wall[coords[1]-2] = replacer
             self.global_base[coords[0]] = "".join(wall)
 
-    def set_closed_room_list(self):
+    def create_closed_room_list(self):
         """
-        Creates lists of all closed rooms after initial path creation
+        Creates lists of all closed rooms after initial path creation and writes to
+        global_rooms
         """
         # for each row
         for i in range(5):
@@ -230,29 +231,9 @@ class BaseMap:
                 j += 1
             i += 1
 
-    def set_items(self):
-        """
-        Set down all collectible items within accessible rooms
-        """
-
-    def set_enemies(self):
-        """
-        Set down enemy encounters within accessible rooms
-        """
-
-    def set_npcs(self):
-        """
-        Set down NPCs like vendors within accessible rooms        
-        """
-
-    def set_event(self):
-        """
-        Set down events within accessible rooms
-        """
-
     def attempt_move(self, entity, instance, direction):
         """
-
+        Checks upon move request if next set of coordinates allow a move
         """
         coords = self.global_entities.get(entity)["instance"][instance]["coords"]
         if direction == "w":
@@ -310,35 +291,62 @@ class BaseMap:
                 return self.global_entities.get(item)
                 break
 
-    def update_entity_coords(self, entity, instance, old_coords, new_coords):
-        """
-        Updates an entities coordinates in global_entities
-        """
-        self.global_entities.get(entity)["instance"][instance]["coords"] = new_coords
 
-
-    def set_entities(self):
+    def write_gold_coords(self):
         """
-        Places all entities from global_entities
+        Writes the gold loot coords to global_entities       
+        """
+
+    def write_loot_coords(self):
+        """
+        Writes the other loot coords to global_entities 
+        """
+
+    def write_enemy_coords(self):
+        """
+        Writes the enemy coords to global_entities 
+        """
+
+    def write_vendor_coords(self):
+        """
+        Writes the vendor coords to global_entities       
+        """
+
+    def place_entities(self):
+        """
+        Writes all entities from global_entities to newly created global_map
         """
         # copies the base map 
         self.global_map = self.global_base[:]
         # completes the map with entities
         for item in self.global_entities:
             for i in range(len(self.global_entities[item]["instance"])):
-                if self.global_entities[item]["instance"][i]["coords"]: #change to draw later
+                if self.global_entities[item]["instance"][i]["coords"]: #check if to draw it at all
                     draw = list(self.global_map[self.global_entities[item]["instance"][i]["coords"][0]])
                     draw[self.global_entities[item]["instance"][i]["coords"][1]] = utils.sym(self.global_entities[item]["sym"])
                     self.global_map[self.global_entities[item]["instance"][i]["coords"][0]] = "".join(draw)
 
+
+    def update_entity_coords(self, entity, instance, old_coords, new_coords):
+        """
+        Updates an entities coordinates in global_entities
+        """
+        self.global_entities.get(entity)["instance"][instance]["coords"] = new_coords
+
     def get_map(self):
-        self.set_entities()
+        """
+        Returns global_map as finalized version of the current map including entities
+        """
+        self.place_entities()
         return self.global_map
 
     def build_map(self):
-        self.set_base_map()
-        self.set_entry_coords()
-        self.set_path()
-        self.set_closed_room_list()
-        self.set_branches()
-        self.set_entities()
+        """
+        Goes through all necessary methods to create a new map
+        """
+        self.create_base_map()
+        self.write_entry_coords()
+        self.create_path()
+        self.create_closed_room_list()
+        self.create_branches()
+        self.place_entities()
