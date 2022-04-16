@@ -269,7 +269,7 @@ def main(game):
     game_status = 0
 
     while game_status == 0:
-        system('cls||clear')
+        #system('cls||clear')
         map = game.get_map()
 
         print_top_infobar()

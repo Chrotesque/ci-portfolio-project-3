@@ -261,6 +261,9 @@ class BaseMap:
                 new_coords = [coords[0]-2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
+            elif map[coords[1]] != " " and map[coords[1]] != "-" and map[coords[1]] != "=":
+                result = self.identify_entity(map[coords[1]])
+                return result
             else:
                 return 0
         elif direction == "s":
@@ -269,6 +272,9 @@ class BaseMap:
                 new_coords = [coords[0]+2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
+            elif map[coords[1]] != " " and map[coords[1]] != "-" and map[coords[1]] != "=":
+                result = self.identify_entity(map[coords[1]])
+                return result
             else:
                 return 0
         elif direction == "a":
@@ -277,6 +283,9 @@ class BaseMap:
                 new_coords = [coords[0], coords[1]-4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
+            elif map[coords[1]-2] != " " and map[coords[1]-2] != "|":
+                result = self.identify_entity(map[coords[1]-2])
+                return result
             else:
                 return 0
         elif direction == "d":
@@ -286,11 +295,20 @@ class BaseMap:
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
                 # level advancement
-            elif map[coords[1]+2] == utils.sym("tridown"):
-                return 2
+            elif map[coords[1]+2] != " " and map[coords[1]+2] != "|":
+                result = self.identify_entity(map[coords[1]+2])
+                return result
             else:
                 return 0
 
+    def identify_entity(self, sym):
+        """
+        Identifies and returns entity based on attempted move towards a direction
+        """
+        for item in self.global_entities:
+            if utils.sym(self.global_entities.get(item)['sym']) == sym:
+                return self.global_entities.get(item)
+                break
 
     def update_entity_coords(self, entity, instance, old_coords, new_coords):
         """
