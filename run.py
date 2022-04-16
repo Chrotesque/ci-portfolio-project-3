@@ -125,8 +125,8 @@ def validate_input(command, game):
             elif move == 0:
                 global_notification.modify_note("You can't go there.")
             else: # move == 2
-                global_notification.modify_note("Congratulations! Deeper we go ...")
-                return 2
+                global_notification.modify_note("Once you descended the stairway, the way closed up behind you. Bummer!")
+                return move
 
         else:
             global_notification.modify_note(f"I'm afraid '{command}' does not compute!")

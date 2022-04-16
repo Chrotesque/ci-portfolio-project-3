@@ -181,9 +181,6 @@ class BaseMap:
                 new_coords = [coords[0]-2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
-            elif map[coords[1]] != " " and map[coords[1]] != "-" and map[coords[1]] != "=":
-                result = self.identify_entity(map[coords[1]])
-                return result
             else:
                 return 0
         elif direction == "s":
@@ -192,9 +189,6 @@ class BaseMap:
                 new_coords = [coords[0]+2, coords[1]]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
-            elif map[coords[1]] != " " and map[coords[1]] != "-" and map[coords[1]] != "=":
-                result = self.identify_entity(map[coords[1]])
-                return result
             else:
                 return 0
         elif direction == "a":
@@ -203,9 +197,6 @@ class BaseMap:
                 new_coords = [coords[0], coords[1]-4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
-            elif map[coords[1]-2] != " " and map[coords[1]-2] != "|":
-                result = self.identify_entity(map[coords[1]-2])
-                return result
             else:
                 return 0
         elif direction == "d":
@@ -215,16 +206,16 @@ class BaseMap:
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
                 # level advancement
-            elif map[coords[1]+2] != " " and map[coords[1]+2] != "|":
-                result = self.identify_entity(map[coords[1]+2])
-                return result
+            elif map[coords[1]+2] == utils.sym("tridown"):
+                return 2
             else:
                 return 0
 
-    def identify_entity(self, sym):
+    def identify_entity(self):
         """
-        Identifies and returns entity based on attempted move towards a direction
+        Identifies and returns entity on players position
         """
+        #sym = self.global_entities["player"]["instance"][0]["coords"]
         for item in self.global_entities:
             if utils.sym(self.global_entities.get(item)['sym']) == sym:
                 return self.global_entities.get(item)
@@ -242,9 +233,13 @@ class BaseMap:
             main_amt = len(self.global_rooms["open"]["main"])
             branch_amt = len(self.global_rooms["open"]["branches"])
             if i < cutoff:
-                coords_list.append(self.global_rooms["open"]["main"][randrange(0,main_amt)])
+                rand_coord = self.global_rooms["open"]["main"][randrange(0,main_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["main"].remove(rand_coord)
             else:
-                coords_list.append(self.global_rooms["open"]["branches"][randrange(0,branch_amt)])
+                rand_coord = self.global_rooms["open"]["branches"][randrange(0,branch_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["branches"].remove(rand_coord)
 
         for i in range(len(coords_list)):
             entity_to_add = {
