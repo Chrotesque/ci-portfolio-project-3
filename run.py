@@ -7,28 +7,10 @@ import utils
 import base_map
 import visible_map as vis_map
 import entity
+import notifications
+import items
 
-class Notifications:
-
-    global_notification = "..."
-
-    def modify_note(self, note):
-        self.global_notification = note
-
-    def print_note(self):
-        """
-        Prints the narrator note
-        """
-        gap = 5
-        string = ""
-        for i in range(gap):
-            string += " "
-
-        print("\n")
-        print(f"{string}{c.Fore.YELLOW}Narrator:{c.Style.RESET_ALL}")
-        print(f"{string}{self.global_notification}\n")
-
-global_notification = Notifications()
+global_notification = notifications.Notifications()
 global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=0, armor=2)
 
 COMMANDS = {
@@ -53,17 +35,7 @@ def welcome():
 def validate_name():
     """
     Validates input for the players name, alternatively assigns a name w/o input
-    """
-    names = [
-        "Unknown Adventurer",
-        "Very Anonymous Adventurer",
-        "Reluctant Adventurer",
-        "Privacy Conscious Adventurer",
-        "Adventurer of Solitude and Mystery",
-        "Mysterious Adventurer",
-        "Mr. Confidentiality"
-    ]
-   
+    """   
     name_chosen = False
     i = 0
     while name_chosen == False:
@@ -75,7 +47,7 @@ def validate_name():
         if not player_input:
             player_input = input("Are you sure you don't want to enter a name? You will get one either way.\n> ")
             if not player_input:
-                name = names[randrange(0,len(names))]
+                name = utils.generate_player_name()
                 global_notification.modify_note(f"Have it your way, '{name}'!")
                 break
             else:
@@ -167,6 +139,9 @@ def entity_interaction(interacting_entity, game):
         global_player.hp_cur -= dmg_taken
         global_notification.modify_note(f"You fought and defeated: {utils.generate_enemy_name()}, you took {str(dmg_taken)} dmg!")
 
+    if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
+
+        vendor()
 
 
 def print_top_infobar():
@@ -266,6 +241,36 @@ def help():
 
     # to stop the main loop from displaying the map
     input("Press Enter to return to the game ...\n> ")
+
+def vendor():
+    # clearing the screen
+    system('cls||clear')
+    name = utils.generate_vendor_name()
+
+    vendor_text = f"""The common folk calls me the {c.Fore.YELLOW}{name}{c.Style.RESET_ALL}!\n
+    Welcome to my shop! It is quite dangerous around here and I was about 
+    to leave. Have a look around but hurry, I'll be leaving right after our 
+    little chit-chat and hopefully fruitful transaction.\n
+    You better have the necessary coin, I do not appreciate common folk
+    like you wasting my time otherwise.\n
+    - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
+        > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}
+    - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
+        > commands: {c.Fore.CYAN}{list_of_commands('use')}{c.Style.RESET_ALL}
+    - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
+        > commands: {c.Fore.CYAN}{list_of_commands('restart')}{c.Style.RESET_ALL}
+    - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
+        > commands: {c.Fore.CYAN}{list_of_commands('help')}{c.Style.RESET_ALL}
+    """
+
+    print(vendor_text)
+
+    global_notification.modify_note("And gone ... I hope you made this visit count!")
+
+    # continues to show until the player is done
+    player_input = ""
+    while not player_input:
+        player_input = input("Press Enter to return to the game ...\n> ")
 
 def next_level(game):
     """

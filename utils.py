@@ -18,7 +18,7 @@ def sym(symbol):
         "heart":"\u2665",
         "sword":"\u2694",
         "death":"\u2620",
-        "hamburger":"\u1f354",
+        "clover":"\u2618",
         "fivestar":"\u2605",
         "fourstar":"\u2726",
         "dir_west":"\u25c1",
@@ -196,6 +196,23 @@ def next_coordinate(coords, direction):
         coords[1] -= 1
     return coords
 
+def generate_player_name():
+    """
+    Generates and returns a random player name if the player doesn't choose one
+    """
+    name_list = [
+        "Unknown Adventurer",
+        "Very Anonymous Adventurer",
+        "Reluctant Adventurer",
+        "Privacy Conscious Adventurer",
+        "Adventurer of Solitude and Mystery",
+        "Mysterious Adventurer",
+        "Mr. Confidentiality"
+    ]
+    rand_num = randrange(0,len(name_list))
+
+    return name_list[rand_num]
+
 def generate_enemy_name():
     """
     Generates and returns a random enemy name
@@ -255,4 +272,78 @@ def generate_enemy_name():
         enemy_str = f"{enemy_str}s"
     
     return " ".join([prefix_str, enemy_str])
+
+def generate_vendor_name():
+    """
+    Generates and returns a random vendor name
+    """
+    prefix = [
+        "Illustrious",
+        "Celebrated",
+        "Distinguished",
+        "Elusive",
+        "Eminent",
+        "Famous",
+        "Almost noteworthy",
+        "Noted",
+        "Notorious",
+        "Renowned",
+        "Plain",
+        "Chaotic",
+        "Cluttered",
+        "Disheveled",
+        "Disorderly",
+        "Ruffled"
+    ]
+    first_name = [
+        "Sir",
+        "Alistair",
+        "Logan",
+        "Quinn",
+        "Horace",
+        "Chester",
+        "Claudette",
+        "Antoinette",
+        "Doofus",
+        "Lord",
+        "Dame",
+        "Lady"
+
+    ]
+    last_name = [
+        "Archibald",
+        "Marple",
+        "Bryton",
+        "Cunningham",
+        "McLeod",
+        "Winterbottom",
+        "Fitzgerald",
+        "Hampton"
+    ]
+    suffix = [
+        "III",
+        "IV",
+        "II",
+        "3rd Earl of Douglas",
+        "2nd Duke of Nothingham",
+        "the Plain",
+        "of Entitlement"
+        "Jr",
+        "Sr",
+        "I and probably last",
+        ""
+    ]
+
+    rand_prefix = randrange(0,len(prefix))
+    rand_first = randrange(0,len(first_name))
+    rand_last = randrange(0,len(last_name))
+    rand_suffix = randrange(0,len(suffix))
+
+    first_portion = " ".join([prefix[rand_prefix], first_name[rand_first], last_name[rand_last]])
+    if not suffix[rand_suffix] == "":
+        second_portion = ", ".join([first_portion, suffix[rand_suffix]])
+        return "".join(second_portion)
+    else:
+        return first_portion
+
 #

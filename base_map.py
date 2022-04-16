@@ -295,6 +295,13 @@ class BaseMap:
         """
         Writes the vendor coords to global_entities       
         """
+        rand_num = randrange(0, len(self.global_rooms["open"]["branches"]))
+        coords = self.global_rooms["open"]["branches"][rand_num]
+        entity_to_add = {
+            "draw":True,
+            "coords":coords
+        }
+        self.global_entities["vendor"]["instance"].append(entity_to_add)
 
     def place_entities(self):
         """
@@ -364,7 +371,7 @@ class BaseMap:
                 ]
             },
             "vendor":{
-                "sym":"hamburger",
+                "sym":"clover",
                 "Fore":"CYAN",
                 "Back":"RESET",
                 "instance":[
@@ -424,4 +431,5 @@ class BaseMap:
         # entities
         self.write_gold_coords()
         self.write_enemy_coords()
+        self.write_vendor_coords()
         self.place_entities()
