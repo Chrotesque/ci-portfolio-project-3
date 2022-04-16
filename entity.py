@@ -7,22 +7,17 @@ class Entity:
 
 class Player(Entity):
 
-    def __init__(self, name, hp_cur, hp_max, dmg, gold):
+    def __init__(self, name, hp_cur, hp_max, armor, dmg, gold):
         super().__init__(name, hp_cur, dmg)
         self.hp_max = hp_max
+        self.armor = armor
         self.gold = gold
 
-    def add_gold(self, amount):
+    def add_attribute_amount(self, attribute, amount):
         """
-        Adds a certain amount to the players gold
+        Adds a certain amount to a chosen attribute
         """
-        self.gold += amount
-
-    def remove_gold(self, amount):
-        """
-        Removes a certain amount to the players gold
-        """
-        self.gold -= amount
+        setattr(self, attribute, amount)
 
 
 class Enemy(Entity):

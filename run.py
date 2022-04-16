@@ -1,6 +1,7 @@
 # Import of game specific modules
 from random import randrange
 from os import system
+import math
 import colorama as c
 import utils
 import base_map
@@ -28,7 +29,7 @@ class Notifications:
         print(f"{string}{self.global_notification}\n")
 
 global_notification = Notifications()
-global_player = entity.Player("", 5, 10, 2, 0)
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=0, armor=2)
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -150,7 +151,7 @@ def entity_interaction(entity, game):
         min_amount = round(5 * (1 + (game.global_level/10)/6))
         max_amount = round(10 * (1 + (game.global_level/10)/3))
         amount = round(randrange(min_amount,max_amount) * (1 + lane_factor))
-        global_player.add_gold(amount)
+        global_player.add_attribute_amount("gold", amount)
         global_notification.modify_note(f"You found {amount} gold!")
 
     if entity[0] == game.global_entities["enemy"]["sym"]:
@@ -163,8 +164,8 @@ def print_top_infobar():
     """
     Prints the players health bar at the top right of the map
     """
-    max = global_player.hp_max
-    cur = global_player.hp_cur
+    max = int(global_player.hp_max/10)
+    cur = int(math.ceil(global_player.hp_cur/10))
     name = global_player.name
     health_string = "Health "
 
