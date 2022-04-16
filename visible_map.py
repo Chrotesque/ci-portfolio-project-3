@@ -40,15 +40,9 @@ class VisibleMap:
         for i in range(iterations):
 
             if iterations == 1:
-                if coords[0] == 1:
-                    factor = -1
-                else: 
-                    factor = 1
+                factor = -1 if coords[0] == 1 else 1
             else:
-                if i == 0:
-                    factor = -1
-                else:
-                    factor = 1 
+                factor = -1 if i == 0 else 1     
 
             # top & bottom
             list_map = list(self.global_mask[coords[0]-(1*factor)])
