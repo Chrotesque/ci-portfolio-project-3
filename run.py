@@ -158,21 +158,18 @@ def print_top_infobar():
     # adding space between name and health bar
     for i in range(screen_length - len(name)-6 - len(health_string) - max):
         player_info.append(" ")
-        i += 1
 
     player_info.append(health_string)
 
     # adding full health bar pieces
     for i in range(cur):
         player_info.append(c.Fore.RED + utils.sym("square") + c.Style.RESET_ALL)
-        i += 1
 
     # adding empty health bar pieces
     if cur != max:
         for i in range(max-cur):
             player_info.append(c.Fore.RED + "-" + c.Style.RESET_ALL)
             c.Style.RESET_ALL
-            i += 1
 
     print("".join(player_info))
 

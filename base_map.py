@@ -166,8 +166,6 @@ class BaseMap:
                 if status == False:
                     self.global_rooms["closed"].append(coords)
 
-                j += 1
-            i += 1
 
     def attempt_move(self, entity, instance, direction):
         """
