@@ -140,13 +140,14 @@ def validate_input(command, game):
     except:
         global_notification.modify_note("Program error, the developer screwed up! Try restarting the game.")
 
-def entity_interaction(entity, game):
-    """
 
+def entity_interaction(interacting_entity, game):
     """
-    lane_factor = utils.return_lane(entity[1])
+    Deals with an entity once engaged
+    """
+    lane_factor = utils.return_lane(interacting_entity[1])
 
-    if entity[0] == game.global_entities["loot"]["sym"]:
+    if interacting_entity[0] == game.global_entities["loot"]["sym"]:
         
         min_amount = round(5 * (1 + (game.global_level/10)/6))
         max_amount = round(10 * (1 + (game.global_level/10)/3))
@@ -154,9 +155,17 @@ def entity_interaction(entity, game):
         global_player.add_attribute_amount("gold", amount)
         global_notification.modify_note(f"You found {amount} gold!")
 
-    if entity[0] == game.global_entities["enemy"]["sym"]:
+    if interacting_entity[0] == game.global_entities["enemy"]["sym"]:
 
-        global_notification.modify_note(f"You fought and defeated: {utils.generate_enemy_name()}!")
+        min_amount = round((1 + game.global_level/4)*2)
+        max_amount = round((1 + game.global_level/5)*5)
+        hp_amount = round(randrange(min_amount, min_amount*2) * (1 + lane_factor/3))
+        dmg_amount = round(randrange(min_amount, max_amount) * (1 + lane_factor/3))
+        enemy = entity.Enemy(hp_cur=hp_amount, dmg=dmg_amount)
+        hits = int(math.ceil(enemy.hp_cur/global_player.dmg))
+        dmg_taken = hits * (abs(global_player.armor - enemy.dmg))
+        global_player.hp_cur -= dmg_taken
+        global_notification.modify_note(f"You fought and defeated: {utils.generate_enemy_name()}, you took {str(dmg_taken)} dmg!")
 
 
 
