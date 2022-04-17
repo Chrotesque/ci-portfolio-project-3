@@ -252,7 +252,7 @@ def print_bottom_infobar(game):
     for i in range(front_gap):
         bottom_info.append(" ")
 
-    front_text = f"{c.Fore.YELLOW}{utils.sym(game.global_entities['loot']['sym'])} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
+    front_text = f"{c.Fore.YELLOW}{utils.sym(game.global_entities['gold']['sym'])} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
     middle_text = f" | Armor: {global_player.armor}, Damage: {global_player.dmg}"
     back_text = "Level " + str(game.global_level)
 
