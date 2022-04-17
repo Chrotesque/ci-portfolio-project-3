@@ -346,4 +346,145 @@ def generate_vendor_name():
     else:
         return first_portion
 
+def generate_gear_name():
+
+    prefix = [
+        "Dirty",
+        "Bloodsoaked",
+        "Pristine",
+        "Mithril",
+        "Golden",
+        "Silver",
+        "Wretched",
+        "Adamantite",
+        "Skeletal",
+        "Peacekepper's",
+        "Crazed",
+        "Fierce",
+        "Bandit's",
+        "Trainee's",
+        "Bronze"
+    ]
+
+    armor = [
+        "Greatplate",
+        "Cuirass",
+        "Trinket",
+        "Helm",
+        "Bracelet",
+        "Dress",
+        "Amulet",
+        "Shield",
+        "Locket",
+        "Robes",
+        "Greaves",
+        "Band",
+        "Gloves",
+        "Mittens",
+        "Pendant",
+        "Crown",
+        "Leggings",
+        "Chestplate",
+        "Padded Vest",
+        "Vest",
+        "Leather Tunic",
+        "Jerkin"
+    ]
+
+    weapon = [
+        "Heartseeker",
+        "Skewer",
+        "Rapier",
+        "Swiftblade",
+        "Spellblade",
+        "Longsword",
+        "Greataxe",
+        "Axe",
+        "Club",
+        "Warhammer",
+        "Stick",
+        "Blade",
+        "Scimitar",
+        "Slicer",
+        "Chopper",
+        "Oathbreaker",
+        "Cleaver",
+        "Broadaxe",
+        "Skullcrusher",
+        "Crescent",
+        "Javelin",
+        "Spear",
+        "Halberd",
+        "Piercer"
+    ]
+
+    suffix = [
+        "of the Monkey",
+        "of the Whale",
+        "of the Whispers",
+        "of Hellish Torment",
+        "of Broken Bones",
+        "of Fire",
+        "of Ice",
+        "of the Liar",
+        "of the Harvest",
+        "of Executions",
+        "of Traitors"
+    ]
+
+    type = "armor" if randrange(0,2) == 1 else "weapon"
+    rand_prefix = randrange(0, len(prefix))
+    item = armor if type == "armor" else weapon
+    rand_item = randrange(0, len(armor)) if type == "armor" else randrange(0, len(weapon))
+    rand_suffix = randrange(0, len(suffix))
+
+    suffix_include = 1 if randrange(0,2) == 1 else 0
+    if suffix_include:
+        return [" ".join([prefix[rand_prefix], item[rand_item], suffix[rand_suffix]]), type]
+    else:
+        return [" ".join([prefix[rand_prefix], item[rand_item]]), type]
+
+def create_loot(level):
+    """
+    Decides based on probabilities what loot will drop
+    """
+    chances = {
+        "gear":0.2,
+        "loot":0.7,
+        "scroll":0.1
+    }
+
+    loot = [
+        "Health Potion",
+        "Rations"
+    ]
+
+    scrolls = [
+        "Scroll of Fireball",
+        "Scroll of Shielding",
+        "Scroll of Healing",
+        "Scroll of Obliteration"
+    ]
+
+    key_to_list = list(chances.keys())
+    val_to_list = list(chances.values())
+
+    choice = np.choice(key_to_list, 1, p=val_to_list)
+    if choice == "loot":
+        name = loot[randrange(0,len(loot))]
+        max_amount = int(round((1+level/20)*2))+1
+        amount = randrange(1,max_amount)
+        type = "".join(choice)
+    elif choice == "scroll":
+        name = scrolls[randrange(0,len(scrolls))]
+        type = "".join(choice)
+        amount = 1
+    else: # gear
+        gear = generate_gear_name()
+        max_amount = int(round((level/2 + 1)*8 if gear[1] == "armor" else (level/5 +1)*5))
+        amount = randrange(int(round(max_amount/2)), max_amount)
+        name = gear[0]
+        type = gear[1]
+
+    return [type, name, amount]
 #

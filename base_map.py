@@ -257,12 +257,33 @@ class BaseMap:
                 "draw":True,
                 "coords":coords_list[i]
             }
-            self.global_entities["loot"]["instance"].append(entity_to_add)
+            self.global_entities["gold"]["instance"].append(entity_to_add)
 
     def write_loot_coords(self):
         """
         Writes the other loot coords to global_entities 
         """
+        coords_list = []
+
+        cutoff = 2
+        for i in range(3,6):
+            main_amt = len(self.global_rooms["open"]["main"])
+            branch_amt = len(self.global_rooms["open"]["branches"])
+            if i < cutoff:
+                rand_coord = self.global_rooms["open"]["main"][randrange(0,main_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["main"].remove(rand_coord)
+            else:
+                rand_coord = self.global_rooms["open"]["branches"][randrange(0,branch_amt)]
+                coords_list.append(rand_coord)
+                self.global_rooms["open"]["branches"].remove(rand_coord)
+
+        for i in range(len(coords_list)):
+            entity_to_add = {
+                "draw":True,
+                "coords":coords_list[i]
+            }
+            self.global_entities["loot"]["instance"].append(entity_to_add)
 
     def write_enemy_coords(self):
         """
@@ -385,6 +406,12 @@ class BaseMap:
                 "sym":"sword",
                 "Fore":"RED",
                 "Back":"RESET",
+                "instance":[]
+            },
+            "loot":{
+                "sym":"fivestar",
+                "Fore":"YELLOW",
+                "Back":"RESET",
                 "instance":[
                     {
                         "draw":True,
@@ -392,7 +419,7 @@ class BaseMap:
                     }
                 ]
             },
-            "loot":{
+            "gold":{
                 "sym":"disc",
                 "Fore":"YELLOW",
                 "Back":"RESET",
@@ -430,6 +457,7 @@ class BaseMap:
 
         # entities
         self.write_gold_coords()
+        self.write_loot_coords()
         self.write_enemy_coords()
         self.write_vendor_coords()
         self.place_entities()

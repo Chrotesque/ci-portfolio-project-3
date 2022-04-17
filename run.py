@@ -11,7 +11,7 @@ import notifications
 import items
 
 global_notification = notifications.Notifications()
-global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=0, armor=2)
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=0, armor=2, inventory={"Scroll of Obliteration":1})
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -81,17 +81,14 @@ def validate_input(command, game):
 
     try:
         if command in COMMANDS["help"]:
-            help()
-        elif command in COMMANDS["restart"]:
-            exit = input("Are you sure you want to restart the game from scratch?\n> ")
-            if not exit:
-                print("no input on restart game")
-            else:
-                print("game restart requested")
+            help(game)
         elif command in COMMANDS["use"]:
-            print("use of item requested")
+            if len(global_player.inventory) < 1:
+                global_notification.modify_note(f"You don't own anything.")
+            else: 
+              use(game)
         elif command in COMMANDS["move"]:
-        
+            regen_life()
             move = game.attempt_move("player", 0, command)
             if move == 1:
                 global_notification.modify_note(f"{COMMANDS['move'].get(command)}")
@@ -119,7 +116,7 @@ def entity_interaction(interacting_entity, game):
     """
     lane_factor = utils.return_lane(interacting_entity[1])
 
-    if interacting_entity[0] == game.global_entities["loot"]["sym"]:
+    if interacting_entity[0] == game.global_entities["gold"]["sym"]:
         
         min_amount = round(5 * (1 + (game.global_level/10)/6))
         max_amount = round(10 * (1 + (game.global_level/10)/3))
@@ -129,19 +126,70 @@ def entity_interaction(interacting_entity, game):
 
     if interacting_entity[0] == game.global_entities["enemy"]["sym"]:
 
+        if not hasattr(global_player, "temp_dmg"):
+            global_player.temp_dmg = 0
+        if not hasattr(global_player, "temp_hp"):
+            global_player.temp_hp = 0
         min_amount = round((1 + game.global_level/4)*2)
         max_amount = round((1 + game.global_level/5)*5)
         hp_amount = round(randrange(min_amount, min_amount*2) * (1 + lane_factor/3))
         dmg_amount = round(randrange(min_amount, max_amount) * (1 + lane_factor/3))
         enemy = entity.Enemy(hp_cur=hp_amount, dmg=dmg_amount)
-        hits = int(math.ceil(enemy.hp_cur/global_player.dmg))
-        dmg_taken = hits * (abs(global_player.armor - enemy.dmg))
-        global_player.hp_cur -= dmg_taken
-        global_notification.modify_note(f"You fought and defeated: {utils.generate_enemy_name()}, you took {str(dmg_taken)} dmg!")
+        hits = int(math.ceil(enemy.hp_cur/(global_player.dmg + global_player.temp_dmg)))
+        dmg_taken = ((hits-1) * (abs(min(0, global_player.armor - enemy.dmg)))) - global_player.temp_hp
+        dmg_dealt_enemy = (hits-1) * enemy.dmg
+        dmg_dealt_player = global_player.dmg + global_player.temp_dmg
+        global_player.temp_dmg = 0
+
+        if global_player.temp_hp > 0:
+            if dmg_dealt_enemy > global_player.temp_hp:
+                global_player.hp_cur -= dmg_dealt_enemy - global_player.temp_hp
+                global_player.temp_hp = 0
+            else:
+                global_player.temp_hp -= dmg_dealt_enemy
+        else:
+            global_player.hp_cur -= dmg_dealt_enemy
+
+        display_enemy = "The enemy was killed before it could react" if dmg_dealt_player > hp_amount else f"The enemy tried to deal {dmg_dealt_enemy} dmg"
+        display_damage = "you took no dmg" if dmg_taken == 0 else f"mitigation reduced that to {str(dmg_taken)} dmg"
+        global_notification.modify_note(f"You dealt {dmg_dealt_player} dmg and defeated: {utils.generate_enemy_name()} {hp_amount} {dmg_amount}\n     {display_enemy}, {display_damage}!")
 
     if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
 
         vendor()
+
+    if interacting_entity[0] == game.global_entities["loot"]["sym"]:
+
+        loot = utils.create_loot(game.global_level)
+        if loot[0] == "loot":
+            string = f"You found some loot: {loot[1]} x{loot[2]}"
+            if loot[1] in global_player.inventory.keys():
+                global_player.inventory[loot[1]] += loot[2]
+            else:
+                global_player.inventory[loot[1]] = loot[2]
+
+        elif loot[0] == "weapon":
+            if loot[2] > global_player.dmg:
+                global_player.dmg = loot[2]
+                string = f"You found and equipped the {loot[0]}, {loot[1]} (+{loot[2]})"
+            else:
+                string = f"You found the {loot[0]}, {loot[1]} (+{loot[2]}) - it was not an upgrade."
+
+        elif loot[0] == "scroll":
+            string = f"You found a {loot[1]}"
+            if loot[1] in global_player.inventory.keys():
+                global_player.inventory[loot[1]] += loot[2]
+            else:
+                global_player.inventory[loot[1]] = loot[2]
+
+        else: # armor
+            if loot[2] > global_player.armor:
+                global_player.armor = loot[2]
+                string = f"You found and equipped a piece of {loot[0]}, {loot[1]} (+{loot[2]})"
+            else:
+                string = f"You found a piece of {loot[0]}, {loot[1]} (+{loot[2]}) - it was not an upgrade."
+
+        global_notification.modify_note(string)
 
 
 def print_top_infobar():
@@ -151,7 +199,7 @@ def print_top_infobar():
     max = int(global_player.hp_max/10)
     cur = int(math.ceil(global_player.hp_cur/10))
     name = global_player.name
-    health_string = "Health "
+    health_string = f"Health ({global_player.hp_cur}) "
 
     front_gap = 5
     screen_length = 78 - front_gap
@@ -163,7 +211,8 @@ def print_top_infobar():
         player_info.append(" ")
 
     # adding the name
-    player_info.append("Name: " + name)
+    name_to_display = f"{c.Fore.GREEN}Name: {name}{c.Style.RESET_ALL}"
+    player_info.append(name_to_display)
 
     # adding space between name and health bar
     for i in range(screen_length - len(name)-6 - len(health_string) - max):
@@ -196,10 +245,12 @@ def print_bottom_infobar(game):
         bottom_info.append(" ")
 
     front_text = f"{c.Fore.YELLOW}{utils.sym(game.global_entities['loot']['sym'])} Gold: {str(global_player.gold)}{c.Style.RESET_ALL}"
+    middle_text = f" | Armor: {global_player.armor}, Damage: {global_player.dmg}"
     back_text = "Level " + str(game.global_level)
 
     bottom_info.append(front_text)
-    for i in range(screen_length - len(front_text)+9 - len(back_text)):
+    bottom_info.append(middle_text)
+    for i in range(screen_length - len(front_text)+9 - len(middle_text) - len(back_text)):
         bottom_info.append(" ")
 
     bottom_info.append(back_text)
@@ -212,15 +263,15 @@ def list_of_commands(key):
     """
     return f"{c.Fore.WHITE},{c.Style.RESET_ALL} {c.Fore.CYAN}".join(COMMANDS[key])
 
-def help():
+def help(game):
     # clearing the screen
     system('cls||clear')
 
     help_text = f"""Welcome to the help screen of {c.Fore.YELLOW}Endless Dungeons on a Budget{c.Style.RESET_ALL}\n
-    This game is quite simple. You ({c.Fore.GREEN}{utils.sym('disc')}{c.Style.RESET_ALL}) venture through a randomly 
+    This game is quite simple. You ({getattr(c.Fore, game.global_entities["player"]["Fore"])}{utils.sym(game.global_entities["player"]["sym"])}{c.Style.RESET_ALL}) venture through a randomly 
     generated dungeon. Level by level you try to delve deeper until you 
-    either give up or get yourself killed. Throughout you will find loot, 
-    monsters, etc.\n
+    either give up or get yourself killed. Throughout you will find 
+    gold {getattr(c.Fore, game.global_entities["gold"]["Fore"])}{utils.sym(game.global_entities["gold"]["sym"])}{c.Style.RESET_ALL}, loot {getattr(c.Fore, game.global_entities["loot"]["Fore"])}{utils.sym(game.global_entities["loot"]["sym"])}{c.Style.RESET_ALL} , monsters {getattr(c.Fore, game.global_entities["enemy"]["Fore"])}{utils.sym(game.global_entities["enemy"]["sym"])}{c.Style.RESET_ALL}  and a vendor {getattr(c.Fore, game.global_entities["vendor"]["Fore"])}{utils.sym(game.global_entities["vendor"]["sym"])}{c.Style.RESET_ALL}  to trade with.\n
     The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
     L1 is the safest lane, L3 the hardest. It depends on you to choose
     which lanes to stick to. That is if the dungeon gives you a choice.\n
@@ -229,8 +280,6 @@ def help():
         > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}
     - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
         > commands: {c.Fore.CYAN}{list_of_commands('use')}{c.Style.RESET_ALL}
-    - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
-        > commands: {c.Fore.CYAN}{list_of_commands('restart')}{c.Style.RESET_ALL}
     - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
         > commands: {c.Fore.CYAN}{list_of_commands('help')}{c.Style.RESET_ALL}
     """
@@ -272,6 +321,104 @@ def vendor():
     while not player_input:
         player_input = input("Press Enter to return to the game ...\n> ")
 
+def use(game):
+    # clearing the screen
+    system('cls||clear')
+    
+    print("Your inventory contains:\n")
+    i = 1
+    item_list = []
+    for item in global_player.inventory:
+        item_list.append(item)
+        print(f"[{i}] {item} x{global_player.inventory.get(item)}")
+        i += 1
+
+    global_notification.modify_note("Couldn't quite find what you were looking for?\n> ")
+
+    print("""\nSimply type the corresponding number of the item that you want 
+to use followed by enter, or exit this screen by typing 0 and then enter.
+    """)
+    # continues to show until the player is done
+    input_msg = "Which item would you like to use?\n> "
+    while True:
+        try:
+            player_input = int(input(input_msg))
+            if player_input == 0:
+                break
+            elif player_input <= len(item_list):
+                global_notification.modify_note(f"You have used: {item_list[player_input-1]}")
+                use_item(item_list[player_input-1], game)
+                break
+            elif player_input > len(item_list)-1:
+                input_msg = "You don't own that.\n"
+                continue
+            elif isinstance(player_input, str):
+                input_msg = "Please type a number like 0, 1, 2, etc.\n"
+                continue
+            else:
+                input_msg = "Please type a number like 0, 1, 2, etc.\n"
+                continue
+        except ValueError:
+            input_msg = "The rules are: type something and it must be a number of an item listed above.\n"
+            continue
+
+def use_item(item, game):
+    """
+    Executes certain actions depending on what items was used
+    """
+    amount = global_player.inventory.get(item)
+
+    if item == "Health Potion":
+        if global_player.hp_cur >= 75:
+            health = 100
+        else:
+            health = global_player.hp_cur + 25
+        global_player.hp_cur = health
+
+    if item == "Rations":
+        global_player.hot = 40
+
+    if item == "Scroll of Fireball":
+        if not hasattr(global_player, "temp_dmg"):
+            global_player.temp_dmg = 0
+        global_player.temp_dmg = game.global_level*2
+
+    if item == "Scroll of Shielding":
+        if not hasattr(global_player, "temp_hp"):
+            global_player.temp_hp = 0
+        global_player.temp_hp = game.global_level*3            
+
+    if item == "Scroll of Healing":
+        global_player.hp_cur = 100
+
+    if item == "Scroll of Obliteration":
+        enemies = game.global_entities["enemy"]["instance"]
+        enemy_amount = len(enemies)
+        for i in range(enemy_amount):
+            enemies[i]["draw"] = False
+
+    if amount > 1:
+        global_player.inventory[item] -= 1
+    else:
+        del global_player.inventory[item]
+
+def regen_life():
+    """
+    Regenerates health after usage of rations
+    """
+    amount = 4
+    if not hasattr(global_player, "hot"):
+        global_player.hot = 0
+    if global_player.hp_cur < 100:
+        if global_player.hp_cur > 96:
+            amount = 100-global_player.hp_cur
+        if global_player.hot > 0:
+            remain = global_player.hot
+            global_player.hp_cur += amount
+            global_player.hot -= amount
+    else:
+        global_player.hot = 0
+
 def next_level(game):
     """
     Increases the level of a running game
@@ -291,7 +438,7 @@ def initiate():
     welcome()
     name = validate_name()
     global_player.name = name
-    game = base_map.BaseMap(1)
+    game = base_map.BaseMap(15)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
