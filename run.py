@@ -11,7 +11,7 @@ import notifications
 import items
 
 global_notification = notifications.Notifications()
-global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":2, "Health Potion":1, "Scroll of Shielding":1})
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":2, "Health Potion":1})
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -29,6 +29,8 @@ def welcome():
     """
     Displays the welcome message at the start of the game
     """
+    # clearing the screen
+    system('cls||clear')
     print(f"{c.Fore.YELLOW}Hey there! Welcome to Endless Dungeons on a Budget{c.Style.RESET_ALL}\n")
     print("Be sure to have a look at the help menu first, before you get started.\n")
 
@@ -157,6 +159,8 @@ def entity_interaction(interacting_entity, game):
         display_damage = "you took no dmg" if final_dmg == 0 else f"mitigation reduced that to {final_dmg} dmg"
         global_notification.modify_note(f"You dealt {dmg_dealt_player} dmg per hit and defeated: {utils.generate_enemy_name()}\n     {display_enemy}, {display_damage}!")
         global_player.hp_cur -= final_dmg
+        if global_player.hp_cur <= 0:
+            game_over(game)
 
     if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
 
@@ -481,6 +485,28 @@ def regen_life():
     else:
         global_player.hot = 0
 
+def game_over(game):
+    """
+    End of game screen once health pool reached 0 or less
+    """
+    # clearing the screen
+    system('cls||clear')
+    print(f"""
+You're dead! You reached level {game.global_level} and had {getattr(c.Fore, game.global_entities["gold"]["Fore"])}{utils.sym(game.global_entities["gold"]["sym"])}{c.Style.RESET_ALL} {global_player.gold}.
+You could have dealt {global_player.dmg} dmg and mitigate {global_player.armor} dmg through your armor!
+If you weren't dead, that is.\n
+    """)
+    global_player.hp_cur = 100
+    global_player.dmg = 2
+    global_player.gold = 50
+    global_player.armor = 2
+    global_player.inventory = inventory={"Rations":2, "Health Potion":1}
+    global_notification.modify_note("Welcome back!? Better luck this time!")
+    input("Restart?\n")
+
+    game.global_level = 0
+    next_level(game)
+
 def next_level(game):
     """
     Increases the level of a running game
@@ -498,9 +524,9 @@ def initiate():
     Initiates the game
     """
     welcome()
-    name = validate_name()
-    global_player.name = name
-    game = base_map.BaseMap(5)
+    player_name = validate_name()
+    global_player.name = player_name
+    game = base_map.BaseMap(20)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
@@ -526,8 +552,5 @@ def main(game):
 
     if game_status == 2:
         next_level(game)
-
-    if game_status == 1:
-        game_over()
 
 initiate()
