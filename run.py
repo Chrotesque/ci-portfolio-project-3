@@ -11,7 +11,7 @@ import notifications
 import items
 
 global_notification = notifications.Notifications()
-global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":2, "Health Potion":1})
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":1, "Health Potion":2})
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -22,7 +22,7 @@ COMMANDS = {
     "a":f"You moved a room to the west {utils.sym('dir_west')}",
     "d":f"You moved a room to the east {utils.sym('dir_east')}"
   },
-  "use":["use", "item"]
+  "use":["use", "item", "q", "i", "u"]
 }
 
 def welcome():
@@ -283,6 +283,15 @@ def help(game):
     The dungeon is divided into 3 "lanes", marked L1, L2 or L3. 
     L1 is the safest lane, L3 the hardest. It depends on you to choose
     which lanes to stick to. That is if the dungeon gives you a choice.\n
+    The following loot {getattr(c.Fore, game.global_entities["loot"]["Fore"])}{utils.sym(game.global_entities["loot"]["sym"])}{c.Style.RESET_ALL}  can be found:
+    - Health Potion - heals you for 25
+    - Rations - heals you per turn for 4, up to 40 in total
+    - Scroll of Fireball - increases the strength of your next attack
+      > based on level
+    - Scroll of Shielding - gives you a shield, not mitigated by armor
+      > based on level
+    - Scroll of Healing - heals you to full
+    - Scroll of Obliteration - destroys all enemies from the level\n
     The following actions are available to you:
     - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
         > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}
@@ -526,7 +535,7 @@ def initiate():
     welcome()
     player_name = validate_name()
     global_player.name = player_name
-    game = base_map.BaseMap(20)
+    game = base_map.BaseMap(1)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
