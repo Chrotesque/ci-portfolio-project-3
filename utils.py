@@ -1,4 +1,3 @@
-# Import of 3rd party modules
 from random import randrange
 import numpy.random as np
 
@@ -88,14 +87,10 @@ def get_coords(coords, reverse=False):
     result = [0,0]
 
     if reverse == False:
-        # x - lanes/rows
         result[0] = coords[0] * 2 + 1
-        # y - columns
         result[1] = 7 + 4 * coords[1]
     else:
-        # x - lanes/rows
         result[0] = int((coords[0] - 1) / 2)
-        # y - columns
         result[1] = int((coords[1] - 7) / 4)
 
     return result
@@ -179,7 +174,6 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
     else:
         result = "none"
 
-    #print(result)
     return result
 
 def next_coordinate(coords, direction):
@@ -347,7 +341,9 @@ def generate_vendor_name():
         return first_portion
 
 def generate_gear_name():
-
+    """
+    Generates a random gear piece name
+    """
     prefix = [
         "Dirty",
         "Bloodsoaked",
@@ -487,4 +483,3 @@ def create_loot(level):
         type = gear[1]
 
     return [type, name, amount]
-#

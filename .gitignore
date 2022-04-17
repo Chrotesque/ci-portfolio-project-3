@@ -6,5 +6,3 @@ __pycache__/
 *.py[cod]
 node_modules/
 .github/
-run_copy.py
-old_run.py

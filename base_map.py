@@ -440,7 +440,9 @@ class BaseMap:
         return self.global_map
 
     def get_entities(self):
-
+        """
+        Returns the global_entities in its current state
+        """
         return self.global_entities
 
     def build_map(self):

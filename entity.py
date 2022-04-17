@@ -19,9 +19,3 @@ class Player(Entity):
         Adds a certain amount to a chosen attribute
         """
         setattr(self, attribute, self.gold + amount)
-
-
-class Enemy(Entity):
-
-    def __init__(self, hp_cur, dmg):
-        super().__init__(hp_cur, dmg)

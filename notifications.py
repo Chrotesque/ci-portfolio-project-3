@@ -5,6 +5,9 @@ class Notifications:
     global_notification = "..."
 
     def modify_note(self, note):
+        """
+        Modifies the global note
+        """
         self.global_notification = note
 
     def print_note(self):

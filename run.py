@@ -1,4 +1,3 @@
-# Import of game specific modules
 from random import randrange
 from os import system
 import math
@@ -8,7 +7,6 @@ import base_map
 import visible_map as vis_map
 import entity
 import notifications
-import items
 
 global_notification = notifications.Notifications()
 global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":1, "Health Potion":2})
@@ -118,6 +116,7 @@ def entity_interaction(interacting_entity, game):
     """
     lane_factor = utils.return_lane(interacting_entity[1])
 
+    # gold
     if interacting_entity[0] == game.global_entities["gold"]["sym"]:
         
         min_amount = round(5 * (1 + (game.global_level/10)/6))
@@ -126,6 +125,7 @@ def entity_interaction(interacting_entity, game):
         global_player.add_attribute_amount("gold", amount)
         global_notification.modify_note(f"You found {amount} gold!")
 
+    # enemies
     if interacting_entity[0] == game.global_entities["enemy"]["sym"]:
 
         if not hasattr(global_player, "temp_dmg"):
@@ -162,12 +162,12 @@ def entity_interaction(interacting_entity, game):
         if global_player.hp_cur <= 0:
             game_over(game)
 
+    # vendor
     if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
-
         vendor(game)
 
+    # loot
     if interacting_entity[0] == game.global_entities["loot"]["sym"]:
-
         loot = utils.create_loot(game.global_level)
         if loot[0] == "loot":
             string = f"You found some loot: {loot[1]} x{loot[2]}"
@@ -272,6 +272,9 @@ def list_of_commands(key):
     return f"{c.Fore.WHITE},{c.Style.RESET_ALL} {c.Fore.CYAN}".join(COMMANDS[key])
 
 def help(game):
+    """
+    Displays the help menu
+    """
     # clearing the screen
     system('cls||clear')
 
@@ -309,6 +312,9 @@ def help(game):
     input("Press Enter to return to the game ...\n> ")
 
 def vendor(game):
+    """
+    Displays up the vendor purchase screen incl random selection of items
+    """
     # clearing the screen
     system('cls||clear')
     name = utils.generate_vendor_name()
@@ -496,7 +502,7 @@ def regen_life():
 
 def game_over(game):
     """
-    End of game screen once health pool reached 0 or less
+    End of game screen once health pool reached 0 or less, leading to a restart
     """
     # clearing the screen
     system('cls||clear')
@@ -509,7 +515,7 @@ If you weren't dead, that is.\n
     global_player.dmg = 2
     global_player.gold = 50
     global_player.armor = 2
-    global_player.inventory = inventory={"Rations":2, "Health Potion":1}
+    global_player.inventory = inventory={"Rations":1, "Health Potion":2}
     global_notification.modify_note("Welcome back!? Better luck this time!")
     input("Restart?\n")
 
@@ -518,7 +524,7 @@ If you weren't dead, that is.\n
 
 def next_level(game):
     """
-    Increases the level of a running game
+    Increments the level of a running game
     """
     new_level = game.global_level + 1
     game = base_map.BaseMap(new_level)
@@ -546,7 +552,6 @@ def main(game):
     """
     Game Logic Loop
     """
-
     game_status = 0
 
     while game_status == 0:

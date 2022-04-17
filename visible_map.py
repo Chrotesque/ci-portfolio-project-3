@@ -120,9 +120,3 @@ class VisibleMap:
         self.colorize_map(entities)
         for i in range(len(self.global_visible)):
             print(self.global_visible[i])
-
-        #for i in range(len(self.map)):
-        #    print(self.map[i])
-
-        #for i in range(len(self.global_mask)):
-        #    print(self.global_mask[i])
