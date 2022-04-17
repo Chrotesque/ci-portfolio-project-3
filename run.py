@@ -11,7 +11,7 @@ import notifications
 import items
 
 global_notification = notifications.Notifications()
-global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=0, armor=2, inventory={"Scroll of Obliteration":1})
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=2000, armor=2, inventory={"Rations":2})
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -156,7 +156,7 @@ def entity_interaction(interacting_entity, game):
 
     if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
 
-        vendor()
+        vendor(game)
 
     if interacting_entity[0] == game.global_entities["loot"]["sym"]:
 
@@ -291,35 +291,93 @@ def help(game):
     # to stop the main loop from displaying the map
     input("Press Enter to return to the game ...\n> ")
 
-def vendor():
+def vendor(game):
     # clearing the screen
     system('cls||clear')
     name = utils.generate_vendor_name()
+    coin = f"{getattr(c.Fore, game.global_entities['gold']['Fore'])}{utils.sym(game.global_entities['gold']['sym'])} {global_player.gold}{c.Style.RESET_ALL}"
 
     vendor_text = f"""The common folk calls me the {c.Fore.YELLOW}{name}{c.Style.RESET_ALL}!\n
-    Welcome to my shop! It is quite dangerous around here and I was about 
-    to leave. Have a look around but hurry, I'll be leaving right after our 
-    little chit-chat and hopefully fruitful transaction.\n
-    You better have the necessary coin, I do not appreciate common folk
-    like you wasting my time otherwise.\n
-    - {c.Fore.CYAN}Move{c.Style.RESET_ALL} around (think north, south, west & east)
-        > commands: {c.Fore.CYAN}{list_of_commands('move')}{c.Style.RESET_ALL}
-    - {c.Fore.CYAN}Use{c.Style.RESET_ALL} an item from your inventory
-        > commands: {c.Fore.CYAN}{list_of_commands('use')}{c.Style.RESET_ALL}
-    - {c.Fore.CYAN}Restart{c.Style.RESET_ALL}, in case you want to begin anew
-        > commands: {c.Fore.CYAN}{list_of_commands('restart')}{c.Style.RESET_ALL}
-    - This {c.Fore.CYAN}help{c.Style.RESET_ALL} screen
-        > commands: {c.Fore.CYAN}{list_of_commands('help')}{c.Style.RESET_ALL}
-    """
+Welcome to my shop! It is quite dangerous around here and I was about 
+to pack up. Have a look around but hurry, I'll be leaving right after 
+our little chit-chat and hopefully fruitful transaction.\n
+You better have the necessary coin, I do not appreciate common folk
+like you wasting my time otherwise.\n
+You have {coin} with you.\n"""
 
     print(vendor_text)
+
+    rand_num = randrange(1,6)
+    item_list = []
+    for i in range(rand_num+1):
+        i += 1
+        item = utils.create_loot(game.global_level)
+        if item[0] == "weapon" or item[0] == "armor" or item[0] == "scroll":
+            formula = (1+(game.global_level/6)) * 100
+            price = randrange(int(round(formula*0.8)), int(round(formula)))
+            coin = f"{getattr(c.Fore, game.global_entities['gold']['Fore'])}{utils.sym(game.global_entities['gold']['sym'])} {price}{c.Style.RESET_ALL}"
+            if item[0] == "scroll":
+                print(f"[{i}] {item[1]} {coin}")
+            else:
+                print(f"[{i}] {item[1]} (+{item[2]}) {coin}")
+        else:
+            formula = (1+(game.global_level/12)) * 50
+            price = randrange(int(round(formula*0.8)), int(round(formula)))
+            coin = f"{getattr(c.Fore, game.global_entities['gold']['Fore'])}{utils.sym(game.global_entities['gold']['sym'])} {price}{c.Style.RESET_ALL}"
+            print(f"[{i}] {item[1]} x{item[2]} {coin}")
+
+        item_list.append({
+            "type":item[0],
+            "name":item[1],
+            "value":item[2],
+            "price":price
+        })
 
     global_notification.modify_note("And gone ... I hope you made this visit count!")
 
     # continues to show until the player is done
-    player_input = ""
-    while not player_input:
-        player_input = input("Press Enter to return to the game ...\n> ")
+    input_msg = "Which item would you like to buy?\n> "
+    while True:
+        try:
+            player_input = int(input(input_msg))
+            if player_input == 0:
+                break
+            elif player_input <= len(item_list):
+                if item_list[player_input-1]["price"] > global_player.gold:
+                    input_msg = "You don't have enough gold. Anything else?\n"
+                else:
+                    global_notification.modify_note(f"You bought: {item_list[player_input-1]['name']}")
+                    buy_item(item_list[player_input-1])
+                    break
+            elif player_input > len(item_list)-1:
+                input_msg = "There is no such offer.\n"
+                continue
+            elif isinstance(player_input, str):
+                input_msg = "Please type a number like 0, 1, 2, etc.\n"
+                continue
+            else:
+                input_msg = "Please type a number like 0, 1, 2, etc.\n"
+                continue
+        except ValueError:
+            input_msg = "Please type something and it must be a number of an item listed above.\n"
+            continue
+
+def buy_item(item):
+    """
+    Buys an item from the vendor and adds it to the inventory
+    """
+    print(item)
+    global_player.gold -= item["price"]
+
+    if item["type"] == "loot" or item["type"] == "scroll":
+        if item["name"] in global_player.inventory.keys():
+            global_player.inventory[item["name"]] += item["value"]
+        else:
+            global_player.inventory[item["name"]] = item["value"]
+    elif item["type"] == "weapon":
+        global_player.dmg = item["value"]
+    else: # armor
+        global_player.armor = item["value"]
 
 def use(game):
     # clearing the screen
@@ -359,7 +417,7 @@ to use followed by enter, or exit this screen by typing 0 and then enter.
                 input_msg = "Please type a number like 0, 1, 2, etc.\n"
                 continue
         except ValueError:
-            input_msg = "The rules are: type something and it must be a number of an item listed above.\n"
+            input_msg = "Please type something and it must be a number of an item listed above.\n"
             continue
 
 def use_item(item, game):
@@ -438,7 +496,7 @@ def initiate():
     welcome()
     name = validate_name()
     global_player.name = name
-    game = base_map.BaseMap(15)
+    game = base_map.BaseMap(1)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
@@ -460,7 +518,6 @@ def main(game):
         vis_map.VisibleMap(map).display_map(game.global_entities["player"]["instance"][0]["coords"], entities)
         print_bottom_infobar(game)
         global_notification.print_note()
-        
         game_status = validate_input(input("What's next? (type 'help' for a list of possible commands)\n> "), game)
 
     if game_status == 2:

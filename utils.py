@@ -358,7 +358,7 @@ def generate_gear_name():
         "Wretched",
         "Adamantite",
         "Skeletal",
-        "Peacekepper's",
+        "Peacekeeper's",
         "Crazed",
         "Fierce",
         "Bandit's",
