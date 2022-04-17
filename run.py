@@ -11,7 +11,7 @@ import notifications
 import items
 
 global_notification = notifications.Notifications()
-global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=2000, armor=2, inventory={"Rations":2})
+global_player = entity.Player(name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={"Rations":2, "Health Potion":1, "Scroll of Shielding":1})
 
 COMMANDS = {
   "help":["help","halp","hlp","h"],
@@ -134,25 +134,29 @@ def entity_interaction(interacting_entity, game):
         max_amount = round((1 + game.global_level/5)*5)
         hp_amount = round(randrange(min_amount, min_amount*2) * (1 + lane_factor/3))
         dmg_amount = round(randrange(min_amount, max_amount) * (1 + lane_factor/3))
-        enemy = entity.Enemy(hp_cur=hp_amount, dmg=dmg_amount)
-        hits = int(math.ceil(enemy.hp_cur/(global_player.dmg + global_player.temp_dmg)))
-        dmg_taken = ((hits-1) * (abs(min(0, global_player.armor - enemy.dmg)))) - global_player.temp_hp
-        dmg_dealt_enemy = (hits-1) * enemy.dmg
+        
+        hits = int(math.ceil(hp_amount/(global_player.dmg + global_player.temp_dmg)))
+        dmg_taken = ((hits-1) * (abs(min(0, global_player.armor - dmg_amount)))) - global_player.temp_hp
         dmg_dealt_player = global_player.dmg + global_player.temp_dmg
-        global_player.temp_dmg = 0
 
-        if global_player.temp_hp > 0:
-            if dmg_dealt_enemy > global_player.temp_hp:
-                global_player.hp_cur -= dmg_dealt_enemy - global_player.temp_hp
-                global_player.temp_hp = 0
-            else:
-                global_player.temp_hp -= dmg_dealt_enemy
+        dmg_dealt_enemy = (hits-1) * dmg_amount
+        dmg_after_shield = dmg_dealt_enemy - global_player.temp_hp
+        if dmg_after_shield <= 0:
+            global_player.temp_hp -= dmg_dealt_enemy
+            dmg_after_shield = 0
+            dmg_after_mitigation = 0
         else:
-            global_player.hp_cur -= dmg_dealt_enemy
+            dmg_after_mitigation = dmg_after_shield - ((hits-1) * global_player.armor)
+            global_player.temp_hp = 0
+        if dmg_after_mitigation < 0:
+            dmg_after_mitigation = 0 
+        
+        final_dmg = dmg_after_mitigation
 
         display_enemy = "The enemy was killed before it could react" if dmg_dealt_player > hp_amount else f"The enemy tried to deal {dmg_dealt_enemy} dmg"
-        display_damage = "you took no dmg" if dmg_taken == 0 else f"mitigation reduced that to {str(dmg_taken)} dmg"
-        global_notification.modify_note(f"You dealt {dmg_dealt_player} dmg and defeated: {utils.generate_enemy_name()} {hp_amount} {dmg_amount}\n     {display_enemy}, {display_damage}!")
+        display_damage = "you took no dmg" if final_dmg == 0 else f"mitigation reduced that to {final_dmg} dmg"
+        global_notification.modify_note(f"You dealt {dmg_dealt_player} dmg per hit and defeated: {utils.generate_enemy_name()}\n     {display_enemy}, {display_damage}!")
+        global_player.hp_cur -= final_dmg
 
     if interacting_entity[0] == game.global_entities["vendor"]["sym"]:
 
@@ -344,7 +348,7 @@ You have {coin} with you.\n"""
                 break
             elif player_input <= len(item_list):
                 if item_list[player_input-1]["price"] > global_player.gold:
-                    input_msg = "You don't have enough gold. Anything else?\n"
+                    input_msg = "You don't have enough gold. Anything else maybe?\n"
                 else:
                     global_notification.modify_note(f"You bought: {item_list[player_input-1]['name']}")
                     buy_item(item_list[player_input-1])
@@ -408,7 +412,7 @@ to use followed by enter, or exit this screen by typing 0 and then enter.
                 use_item(item_list[player_input-1], game)
                 break
             elif player_input > len(item_list)-1:
-                input_msg = "You don't own that.\n"
+                input_msg = "You don't have more than what's listed.\n"
                 continue
             elif isinstance(player_input, str):
                 input_msg = "Please type a number like 0, 1, 2, etc.\n"
@@ -496,7 +500,7 @@ def initiate():
     welcome()
     name = validate_name()
     global_player.name = name
-    game = base_map.BaseMap(1)
+    game = base_map.BaseMap(5)
     game.build_map()
     map = game.get_map()
     vis_map.VisibleMap(map).set_mask()
@@ -511,7 +515,7 @@ def main(game):
     game_status = 0
 
     while game_status == 0:
-        #system('cls||clear')
+        system('cls||clear')
         map = game.get_map()
         entities = game.get_entities()
         print_top_infobar()
