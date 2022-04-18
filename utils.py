@@ -3,36 +3,35 @@ import numpy.random as np
 
 ROW_INC = 4
 
+
 def sym(symbol):
     """
     Converts a string into a symbol using unicode characters
     https://unicode-table.com/en/blocks/geometric-shapes/
     """
     switchcase = {
-        "square":"\u25a0",
-        "tridown":"\u25bc",
-        "triright":"\u25ba",
-        "disc":"\u25cf",
-        "player":"\u1338",
-        "heart":"\u2665",
-        "sword":"\u2694",
-        "death":"\u2620",
-        "clover":"\u2618",
-        "fivestar":"\u2605",
-        "fourstar":"\u2726",
-        "dir_west":"\u25c1",
-        "dir_east":"\u25b7",
-        "dir_north":"\u25b3",
-        "dir_south":"\u25bd"
+        "square": "\u25a0",
+        "tridown": "\u25bc",
+        "triright": "\u25ba",
+        "disc": "\u25cf",
+        "player": "\u1338",
+        "sword": "\u2694",
+        "clover": "\u2618",
+        "fivestar": "\u2605",
+        "dir_west": "\u25c1",
+        "dir_east": "\u25b7",
+        "dir_north": "\u25b3",
+        "dir_south": "\u25bd"
     }
-    
+
     return switchcase.get(symbol, "nothing")
+
 
 def get_entry_lane(level):
     """
     Chooses the level entry lane based on a probability and level
     """
-    lanes = [1,2,3]
+    lanes = [1, 2, 3]
     level = 11 if level > 11 else level
     probabilities = [
         1 - 0.06 * (level-1),
@@ -42,6 +41,7 @@ def get_entry_lane(level):
     lane = np.choice(lanes, 1, p=probabilities)
 
     return lane
+
 
 def return_lane(coords):
     """
@@ -54,25 +54,27 @@ def return_lane(coords):
     else:
         return 0
 
+
 def get_entry_side(lane):
     """
     Decides the lane side for lanes 2 & 3
     """
-    rand_num = randrange(1,3)
+    rand_num = randrange(1, 3)
     if lane == 2:
         if rand_num > 1:
-            side = 3 # lane 2 top
+            side = 3  # lane 2 top
         else:
-            side = 7 # lane 2 bottom
+            side = 7  # lane 2 bottom
     elif lane == 3:
         if rand_num > 1:
-            side = 1 # lane 3 top
+            side = 1  # lane 3 top
         else:
-            side = 9 # lane 3 bottom
+            side = 9  # lane 3 bottom
     else:
-        side = 5 # lane 1
-    
+        side = 5  # lane 1
+
     return side
+
 
 def lane_to_xcoord(lane):
     """
@@ -80,13 +82,14 @@ def lane_to_xcoord(lane):
     """
     return int((lane-1)/2)
 
+
 def get_coords(coords, reverse=False):
     """
     Converts coordinates from/to normalized to grid coordinates
     """
-    result = [0,0]
+    result = [0, 0]
 
-    if reverse == False:
+    if not reverse:
         result[0] = coords[0] * 2 + 1
         result[1] = 7 + 4 * coords[1]
     else:
@@ -95,9 +98,10 @@ def get_coords(coords, reverse=False):
 
     return result
 
+
 def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
-    Creates a path based on probabilities with properties to exclude 
+    Creates a path based on probabilities with properties to exclude
     left and right for main path creation vs branch creation
     """
     lane = coords[0]
@@ -124,11 +128,11 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
         options["right"] = 0.25
         options["down"] = 0.2
         options["left"] = 0.25
-    else: #lane == 4
+    else:  # lane == 4
         options["up"] = 0.4
         options["right"] = 0.3
         options["left"] = 0.3
-        
+
     # option removal
     # going up
     if prev_coords[0] > coords[0] and "down" in options:
@@ -142,12 +146,12 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
     # going right
     if prev_coords[1] < coords[1] and "left" in options:
         del options["left"]
-    
+
     # can't go left
     if "left" in options and row == 0:
         del options["left"]
     # can't go right
-    if "right" in options and row == 17 and create_exit == False:
+    if "right" in options and row == 17 and not create_exit:
         del options["right"]
     # can't go up
     if "up" in options and lane == 0:
@@ -157,7 +161,7 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
         del options["down"]
 
     # for main path generation, to never go left
-    if "left" in options and exclude_left == True:
+    if "left" in options and exclude_left:
         del options["left"]
 
     key_to_list = list(options.keys())
@@ -176,9 +180,10 @@ def get_path_options(prev_coords, coords, exclude_left, create_exit):
 
     return result
 
+
 def next_coordinate(coords, direction):
     """
-    Returns the coordinate of the room after the next move based on the direction
+    Returns the coords of the room after the next move based on the direction
     """
     if direction == "up":
         coords[0] -= 1
@@ -186,9 +191,10 @@ def next_coordinate(coords, direction):
         coords[0] += 1
     elif direction == "right":
         coords[1] += 1
-    else: # direction == "left"
+    else:  # direction == "left"
         coords[1] -= 1
     return coords
+
 
 def generate_player_name():
     """
@@ -203,9 +209,10 @@ def generate_player_name():
         "Mysterious Adventurer",
         "Mr. Confidentiality"
     ]
-    rand_num = randrange(0,len(name_list))
+    rand_num = randrange(0, len(name_list))
 
     return name_list[rand_num]
+
 
 def generate_enemy_name():
     """
@@ -255,17 +262,18 @@ def generate_enemy_name():
         "Brute"
     ]
 
-    rand_prefix = randrange(0,len(prefix))
-    rand_enemy = randrange(0,len(enemy))
-    rand_num = randrange(1,5)
+    rand_prefix = randrange(0, len(prefix))
+    rand_enemy = randrange(0, len(enemy))
+    rand_num = randrange(1, 5)
     prefix_str = prefix[rand_prefix]
     enemy_str = enemy[rand_enemy]
 
     if rand_num > 1:
         prefix_str = f"{str(rand_num)} {prefix_str}"
         enemy_str = f"{enemy_str}s"
-    
+
     return " ".join([prefix_str, enemy_str])
+
 
 def generate_vendor_name():
     """
@@ -321,24 +329,26 @@ def generate_vendor_name():
         "3rd Earl of Douglas",
         "2nd Duke of Nothingham",
         "the Plain",
-        "of Entitlement"
+        "of Entitlement",
         "Jr",
         "Sr",
         "I and probably last",
         ""
     ]
 
-    rand_prefix = randrange(0,len(prefix))
-    rand_first = randrange(0,len(first_name))
-    rand_last = randrange(0,len(last_name))
-    rand_suffix = randrange(0,len(suffix))
+    rand_prefix = randrange(0, len(prefix))
+    rand_first = randrange(0, len(first_name))
+    rand_last = randrange(0, len(last_name))
+    rand_suffix = randrange(0, len(suffix))
 
-    first_portion = " ".join([prefix[rand_prefix], first_name[rand_first], last_name[rand_last]])
+    first_portion = " ".join([prefix[rand_prefix], first_name[
+        rand_first], last_name[rand_last]])
     if not suffix[rand_suffix] == "":
         second_portion = ", ".join([first_portion, suffix[rand_suffix]])
         return "".join(second_portion)
     else:
         return first_portion
+
 
 def generate_gear_name():
     """
@@ -428,26 +438,29 @@ def generate_gear_name():
         "of Traitors"
     ]
 
-    type = "armor" if randrange(0,2) == 1 else "weapon"
+    type = "armor" if randrange(0, 2) == 1 else "weapon"
     rand_prefix = randrange(0, len(prefix))
     item = armor if type == "armor" else weapon
-    rand_item = randrange(0, len(armor)) if type == "armor" else randrange(0, len(weapon))
+    rand_item = randrange(0, len(armor)) if type == "armor" else randrange(
+        0, len(weapon))
     rand_suffix = randrange(0, len(suffix))
 
-    suffix_include = 1 if randrange(0,2) == 1 else 0
+    suffix_include = 1 if randrange(0, 2) == 1 else 0
     if suffix_include:
-        return [" ".join([prefix[rand_prefix], item[rand_item], suffix[rand_suffix]]), type]
+        return [" ".join([prefix[rand_prefix], item[rand_item], suffix[
+            rand_suffix]]), type]
     else:
         return [" ".join([prefix[rand_prefix], item[rand_item]]), type]
+
 
 def create_loot(level):
     """
     Decides based on probabilities what loot will drop
     """
     chances = {
-        "gear":0.2,
-        "loot":0.7,
-        "scroll":0.1
+        "gear": 0.2,
+        "loot": 0.7,
+        "scroll": 0.1
     }
 
     loot = [
@@ -467,17 +480,19 @@ def create_loot(level):
 
     choice = np.choice(key_to_list, 1, p=val_to_list)
     if choice == "loot":
-        name = loot[randrange(0,len(loot))]
-        max_amount = int(round((1+level/20)*2))+1
-        amount = randrange(1,max_amount)
+        name = loot[randrange(0, len(loot))]
+        max_amount = int(round((1+level/20) * 2)) + 1
+        amount = randrange(1, max_amount)
         type = "".join(choice)
     elif choice == "scroll":
-        name = scrolls[randrange(0,len(scrolls))]
+        name = scrolls[randrange(0, len(scrolls))]
         type = "".join(choice)
         amount = 1
-    else: # gear
+    else:  # gear
         gear = generate_gear_name()
-        max_amount = int(round((level/2 + 1)*8 if gear[1] == "armor" else (level/5 +1)*5))
+        max_amount = int(
+            round((
+                level/2 + 1) * 8 if gear[1] == "armor" else (level/5 + 1) * 5))
         amount = randrange(int(round(max_amount/2)), max_amount)
         name = gear[0]
         type = gear[1]

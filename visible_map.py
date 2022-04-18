@@ -1,6 +1,7 @@
 import colorama as c
 from utils import sym
 
+
 class VisibleMap:
 
     global_mask = []
@@ -28,7 +29,6 @@ class VisibleMap:
                 for j in range(72):
                     list_map.append("X")
                 self.global_mask.append("".join(list_map))
-        
 
     def reveal_area(self, coords):
         """
@@ -42,7 +42,7 @@ class VisibleMap:
             if iterations == 1:
                 factor = -1 if coords[0] == 1 else 1
             else:
-                factor = -1 if i == 0 else 1     
+                factor = -1 if i == 0 else 1
 
             # top & bottom
             list_map = list(self.global_mask[coords[0]-(1*factor)])
@@ -51,7 +51,8 @@ class VisibleMap:
             del list_map[coords[1]-2:coords[1]+3]
             list_map[coords[1]-2:coords[1]-2] = replacer
 
-            list_upmap[coords[1]] = "O" if list_actmap[coords[1]] == " " else list_upmap[coords[1]]
+            list_upmap[coords[1]] = "O" if list_actmap[
+                coords[1]] == " " else list_upmap[coords[1]]
             self.global_mask[coords[0]-(2*factor)] = "".join(list_upmap)
             self.global_mask[coords[0]-(1*factor)] = "".join(list_map)
 
@@ -61,12 +62,13 @@ class VisibleMap:
         del list_map[coords[1]-2:coords[1]+3]
         list_map[coords[1]-2:coords[1]-2] = replacer
 
-        list_map[coords[1]-4] = "O" if list_actmap[coords[1]-2] == " " else list_map[coords[1]-4]
+        list_map[coords[1]-4] = "O" if list_actmap[
+            coords[1]-2] == " " else list_map[coords[1]-4]
         if coords[1] < 75:
-            list_map[coords[1]+4] = "O" if list_actmap[coords[1]+2] == " " else list_map[coords[1]+4]
+            list_map[coords[1]+4] = "O" if list_actmap[
+                coords[1]+2] == " " else list_map[coords[1]+4]
 
         self.global_mask[coords[0]] = "".join(list_map)
-
 
     def reveal_map(self):
         """
@@ -105,9 +107,10 @@ class VisibleMap:
                 for j in range(len(list_map)):
                     # for each item in entities dict
                     for k in range(len(sym_list)):
-                        # if a match is found, change it according to the colorize dict
                         if list_map[j] == sym_list[k]:
-                            list_map[j] = getattr(c.Fore, col_list[k]["Fore"]) + getattr(c.Back, col_list[k]["Back"]) + sym_list[k] + c.Style.RESET_ALL
+                            list_map[j] = getattr(c.Fore, col_list[k][
+                                "Fore"]) + getattr(c.Back, col_list[k][
+                                    "Back"]) + sym_list[k] + c.Style.RESET_ALL
                 # convert from list to string again
                 self.global_visible[i] = "".join(list_map)
 
@@ -118,5 +121,6 @@ class VisibleMap:
         self.reveal_area(coords)
         self.reveal_map()
         self.colorize_map(entities)
-        for i in range(len(self.global_visible)):
-            print(self.global_visible[i])
+        map_to_render = self.global_visible
+        for i in range(len(map_to_render)):
+            print(map_to_render[i])

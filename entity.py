@@ -4,6 +4,7 @@ class Entity:
         self.hp_cur = hp_cur
         self.dmg = dmg
 
+
 class Player(Entity):
 
     def __init__(self, name, hp_cur, hp_max, armor, dmg, gold, inventory):
