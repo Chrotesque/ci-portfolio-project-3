@@ -642,7 +642,7 @@ def game_over(game):
     # clearing the screen
     system('cls||clear')
     title = "YOU DIED"
-    print(f"""{cf.YELLOW}{custom_fig.renderText(title)}{cs.RESET_ALL}
+    print(f"""{cf.RED}{custom_fig.renderText(title)}{cs.RESET_ALL}
 You reached level {game.global_level} and had {getattr(
 cf, game.global_entities["gold"]["Fore"])}{utils.sym(game.global_entities[
 "gold"]["sym"])}{cs.RESET_ALL} {global_player.gold}.
@@ -697,7 +697,6 @@ def main(game):
     game_status = 0
 
     while game_status == 0:
-        print('\n' * 9)
         system('cls||clear')
         map = game.get_map()
         entities = game.get_entities()
