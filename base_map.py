@@ -98,7 +98,7 @@ class BaseMap:
             if branch_max == 9:
                 break
 
-            branch_num += 1 
+            branch_num += 1
             new_open_rooms = []
             prev_coords = self.global_rooms["closed"][
                 randrange(0, len(self.global_rooms["closed"]))]
@@ -129,8 +129,7 @@ class BaseMap:
                     continue
 
                 # next room is on open room list
-                else:  # utils.get_coords(readable_coords) in self.global_rooms[
-                       # "open"]["all"]:
+                else:
                     self.remove_wall(real_coords, branch)
                     break
 
@@ -142,26 +141,6 @@ class BaseMap:
             # extend the while loop if branch is super short
             if len(new_open_rooms) < 2:
                 branch_max += 1
-
-    def create_branches2(self):
-        """
-
-        """
-        branch_amount = 0
-        branch = 1
-        while branch_amount < 4:
-            
-            initial_coords = self.global_rooms["closed"][
-                randrange(0, len(self.global_rooms["closed"]))]
-
-
-            list_map = list(self.global_base[initial_coords[0]]) #
-            list_map[initial_coords[1]] = str(branch) #
-            self.global_base[initial_coords[0]] = "".join(list_map) #
-
-            branch_amount += 1
-            branch += 1
-
 
     def remove_wall(self, coords, side, replacer=" "):
         """
@@ -314,7 +293,7 @@ class BaseMap:
         coords_list = []
 
         cutoff = 2
-        for i in range(3, 6):
+        for i in range(3, 5):
             main_amt = len(self.global_rooms["open"]["main"])
             branch_amt = len(self.global_rooms["open"]["branches"])
             if i < cutoff:

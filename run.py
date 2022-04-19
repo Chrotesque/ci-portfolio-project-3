@@ -164,9 +164,9 @@ def entity_interaction(interacting_entity, game):
         min_amount = round((1 + game.global_level/4)*2)
         max_amount = round((1 + game.global_level/5)*5)
         hp_amount = round(
-            randrange(min_amount, min_amount*2) * (1 + lane_factor/3))
+            randrange(min_amount, min_amount*2) * (1 + lane_factor))
         dmg_amount = round(
-            randrange(min_amount, max_amount) * (1 + lane_factor/3))
+            randrange(min_amount, max_amount) * (1 + lane_factor))
 
         hits = int(math.ceil(hp_amount/(global_player.dmg +
                                         global_player.temp_dmg)))

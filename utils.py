@@ -48,9 +48,9 @@ def return_lane(coords):
     Returns the lane (1, 2 or 3) depending on a given coordinate
     """
     if coords[0] == 1 or coords[0] == 9:
-        return 0.5
+        return 0.2
     elif coords[0] == 3 or coords[0] == 7:
-        return 0.25
+        return 0.1
     else:
         return 0
 
@@ -458,9 +458,9 @@ def create_loot(level):
     Decides based on probabilities what loot will drop
     """
     chances = {
-        "gear": 0.2,
+        "gear": 0.1,
         "loot": 0.7,
-        "scroll": 0.1
+        "scroll": 0.2
     }
 
     loot = [
