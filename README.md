@@ -27,6 +27,14 @@ Endless Dungeons on a budget is a Python terminal based dungeon crawler. The goa
 
 I spent a good amount of time before typing any code planning and thinking through the logic of the project, as well as how to separate the logic into smaller chunks to avoid a single big python file. Given that I've never done this before, I couldn't fully anticipate the depth of this project, so the initial flow charts found an early end while I ultimately fleshed out the project as I went along.
 
+<details>
+<summary>Flowchart:</summary>
+
+![Flowchart](assets/images/readme/flowchart.jpg)
+</details>
+
+<br>
+
 # **Features** ([^](#table-of-contents))
 - The game starts off by asking the player for a name, which - if not provided - will be provided for the player
 - The player is being thrown in a randomly generated dungeon with 1 main path and several (random amount) branches leading into the main path
@@ -51,6 +59,12 @@ I spent a good amount of time before typing any code planning and thinking throu
 ![Help screen](assets/images/readme/help2.jpg) 
 
 - All entities have their own specific colors through colorama
+
+- Every enemy, equipment piece (weapons, armor), vendor and player names if the player does not provide a name are randomly generated from lists of possible variations and combinations
+
+- Everything from enemy health, damage, gear strength values is randomly generated. A few things are additionally based on level to increase in strength the further the player gets and enemies are, additionally, also stronger on higher lanes (L1 > L2 > L3)
+
+- The generation of items throughout the level follows certain rules, such as the vendor is never to be found on the main path, to encourage exploration; a few loot drops will always be on the main path, the rest will be on the side branches, etc.
 
 <br>
 
