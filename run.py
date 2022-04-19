@@ -363,7 +363,12 @@ def help(game):
     - Scroll of Shielding - gives you a shield, not mitigated by armor
       > based on level
     - Scroll of Healing - heals you to full
-    - Scroll of Obliteration - destroys all enemies from the level\n
+    - Scroll of Obliteration - destroys all enemies from the level\n"""
+    print(help_text)
+
+    input("Press Enter for page 2 ...\n> ")
+
+    help_text_two = f"""
     The following actions are available to you:
     - {cf.CYAN}Move{
     cs.RESET_ALL} around (think north, south, west & east)
@@ -373,8 +378,7 @@ def help(game):
     - This {cf.CYAN}help{cs.RESET_ALL} screen
         > commands: {cf.CYAN}{list_of_commands('help')}{cs.RESET_ALL}
     """
-
-    print(help_text)
+    print(help_text_two)
 
     global_notification.modify_note(
         "Now that you're done with the help screen, shall we move on?")
@@ -693,6 +697,7 @@ def main(game):
     game_status = 0
 
     while game_status == 0:
+        print('\n' * 9)
         system('cls||clear')
         map = game.get_map()
         entities = game.get_entities()
