@@ -229,8 +229,8 @@ def entity_interaction(interacting_entity, game):
         elif loot[0] == "weapon":
             if loot[2] > global_player.dmg:
                 global_player.dmg = loot[2]
-                string = f"You found and equipped the {loot[0]}, {loot[1]}"
-                f"(+{loot[2]})"
+                string = f"You found and equipped the {loot[0]}, {loot[1]} "\
+                          f"(+{loot[2]})"
             else:
                 string = f"""You found the {loot[0]}, {loot[1]} (+{loot[2]}) -
                  it was not an upgrade."""
@@ -460,11 +460,13 @@ You have {coin} with you.\n"""
         coin = f"{coin_col}{coin_sym} {item_list[item]['price']}{cs.RESET_ALL}"
 
         if item_list[item]["type"] == "loot":
-            format = f"x{item_list[item]['value']}"
+            format = f" x{item_list[item]['value']}"
+        elif item_list[item]["type"] == "scroll":
+            format = ""
         else:
-            format = f"(+{item_list[item]['value']})"
+            format = f" (+{item_list[item]['value']})"
 
-        print(f"    [{count}] {item_list[item]['name']} {format} {coin}")
+        print(f"    [{count}] {item_list[item]['name']}{format} {coin}")
         item_list[item]["num"] = d
 
         i += 1
@@ -497,7 +499,7 @@ You have {coin} with you.\n"""
                 else:
                     type = selection["type"]
                     if type == "weapon" or type == "armor":
-                        note = f"You bought: {selection['name']}"\
+                        note = f"You bought: {selection['name']} "\
                                f"(+{selection['value']})"
                         global_notification.modify_note(note)
                     else:
