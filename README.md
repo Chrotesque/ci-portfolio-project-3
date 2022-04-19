@@ -40,23 +40,23 @@ I spent a good amount of time before typing any code planning and thinking throu
 - The player is being thrown in a randomly generated dungeon with 1 main path and several (random amount) branches leading into the main path
 - The level is divided into 3 "lanes", L1 being the easiest with L3 being the hardest - enemies scale depending on what lane they're being fought on
 
-![Map and Lanes](assets/images/readme/map_overview.jpg) 
+    ![Map and Lanes](assets/images/readme/map_overview.jpg) 
 - The Goal is to reach the right side and find the exit, to advance the level - which is then newly generated
 
-![End of Level](assets/images/readme/level_end.jpg) 
+    ![End of Level](assets/images/readme/level_end.jpg) 
 - The player can encounter multiple drops of gold and "loot", multiple enemies as well as a single vendor per level
 - The vendor allows the player to purchase a random selection of items for gold
 
-![Vendor screen](assets/images/readme/vendor.jpg) 
+    ![Vendor screen](assets/images/readme/vendor.jpg) 
 
 - Loot can consist of healing items as well as weapons and armor, which increase the players damage and armor values or allow healing throughout the dungeon using the inventory screen
 
-![Inventory screen](assets/images/readme/inventory.jpg) 
+    ![Inventory screen](assets/images/readme/inventory.jpg) 
 
 - The player can always check up on available commands in the help screen, it also includes additional information about the game in general; the commands / keys were chosen based off of regular video game controls (W, A, S, D) and for convenience sake (inventory being on Q)
 
-![Help screen](assets/images/readme/help1.jpg) 
-![Help screen](assets/images/readme/help2.jpg) 
+    ![Help screen #1](assets/images/readme/help1.jpg) 
+    ![Help screen #2](assets/images/readme/help2.jpg) 
 
 - All entities have their own specific colors through colorama
 
@@ -65,6 +65,16 @@ I spent a good amount of time before typing any code planning and thinking throu
 - Everything from enemy health, damage, gear strength values is randomly generated. A few things are additionally based on level to increase in strength the further the player gets and enemies are, additionally, also stronger on higher lanes (L1 > L2 > L3)
 
 - The generation of items throughout the level follows certain rules, such as the vendor is never to be found on the main path, to encourage exploration; a few loot drops will always be on the main path, the rest will be on the side branches, etc.
+
+- Every action in the game provides text feedback under the headline of the "Narrator":
+
+    ![Narrator Text 1st](assets/images/readme/narrator1.jpg) 
+
+    ![Narrator Text 2nd](assets/images/readme/narrator2.jpg) 
+
+- Upon death the player will see an overview of a few achievements, in regards to stats:
+
+    ![Death screen](assets/images/readme/death.jpg) 
 
 <br>
 
