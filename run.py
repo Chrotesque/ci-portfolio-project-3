@@ -366,7 +366,7 @@ def help(game):
     - Scroll of Obliteration - destroys all enemies from the level\n"""
     print(help_text)
 
-    input("Press Enter for page 2 ...\n> ")
+    input("Press Enter for page 2 ...\n")
 
     help_text_two = f"""
     The following actions are available to you:
@@ -384,7 +384,7 @@ def help(game):
         "Now that you're done with the help screen, shall we move on?")
 
     # to stop the main loop from displaying the map
-    input("Press Enter to return to the game ...\n> ")
+    input("Press Enter to return to the game ...\n")
 
 
 def list_of_commands(key):
@@ -643,12 +643,14 @@ def game_over(game):
     system('cls||clear')
     title = "YOU DIED"
     print(f"""{cf.RED}{custom_fig.renderText(title)}{cs.RESET_ALL}
-You reached level {game.global_level} and had {getattr(
-cf, game.global_entities["gold"]["Fore"])}{utils.sym(game.global_entities[
+You final stats were ...
+- level reached: {game.global_level} 
+- gold collected: {getattr(cf, game.global_entities[
+    "gold"]["Fore"])}{utils.sym(game.global_entities[
 "gold"]["sym"])}{cs.RESET_ALL} {global_player.gold}.
-You could have dealt {global_player.dmg} dmg and mitigate {
-global_player.armor} dmg through your armor!
-If you weren't dead, that is.\n
+- damage ability: {global_player.dmg} dmg
+- armor value: {
+global_player.armor}
     """)
     global_player.hp_cur = 100
     global_player.dmg = 2
