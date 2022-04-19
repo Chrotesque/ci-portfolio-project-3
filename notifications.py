@@ -1,5 +1,6 @@
 import colorama as c
 
+
 class Notifications:
 
     global_notification = "..."

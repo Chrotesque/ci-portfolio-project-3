@@ -14,7 +14,6 @@ import entity
 import notifications
 
 custom_fig = Figlet(font="cybermedium")
-
 global_notification = notifications.Notifications()
 global_player = entity.Player(
     name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={
@@ -37,7 +36,6 @@ def welcome():
     """
     Displays the welcome message at the start of the game
     """
-    # clearing the screen
     system('cls||clear')
     title = "Endless Dungeons"
     sub_title = "on a budget"
@@ -102,13 +100,16 @@ def validate_input(command, game):
     new_command = command[:].lower()
 
     try:
+        # help
         if command in COMMANDS["help"]:
             help(game)
+        # use
         elif command in COMMANDS["use"]:
             if len(global_player.inventory) < 1:
                 global_notification.modify_note(f"You don't own anything.")
             else:
                 use(game)
+        # move
         elif command in COMMANDS["move"]:
             regen_life()
             move = game.attempt_move("player", 0, command)
@@ -126,9 +127,11 @@ def validate_input(command, game):
                 global_notification.modify_note(string)
                 return move
 
+        # nothing entered
         elif not command:
             global_notification.modify_note(
                 "Well you have to write something at least!")
+        # command not recognized
         else:
             global_notification.modify_note(
                 f"I'm afraid '{command}' does not compute!")
@@ -161,6 +164,7 @@ def entity_interaction(interacting_entity, game):
         if not hasattr(global_player, "temp_hp"):
             global_player.temp_hp = 0
 
+        # overly complicated dmg calculation
         min_amount = round((1 + game.global_level/4)*2)
         max_amount = round((1 + game.global_level/5)*5)
         hp_amount = round(
@@ -252,7 +256,7 @@ def entity_interaction(interacting_entity, game):
 
 def print_top_infobar():
     """
-    Prints the players health bar at the top right of the map
+    Prints the players name & health at the top right of the map
     """
     max = int(global_player.hp_max/10)
     cur = int(math.ceil(global_player.hp_cur/10))
@@ -301,9 +305,11 @@ def print_bottom_infobar(game):
 
     bottom_info = []
 
+    # to align with map borders
     for i in range(front_gap):
         bottom_info.append(" ")
 
+    # gold, armor, dmg & level text
     front_text = f"{cf.YELLOW}"\
         f"{utils.sym(game.global_entities['gold']['sym'])} "\
         f"Gold: {str(global_player.gold)}{cs.RESET_ALL}"
@@ -341,7 +347,7 @@ def help(game):
     generated dungeon. Level by level you try to delve deeper until you
     either give up or get yourself killed. Throughout you will find
     gold {getattr(cf, game.global_entities["gold"]["Fore"])}{
-    utils.sym(game.global_entities["gold"]["sym"])}{cs.RESET_ALL}, loot {
+    utils.sym(game.global_entities["gold"]["sym"])}{cs.RESET_ALL} , loot {
     getattr(cf, game.global_entities["loot"]["Fore"])}{
     utils.sym(game.global_entities["loot"]["sym"])}{
     cs.RESET_ALL} , monsters {getattr(
@@ -357,7 +363,7 @@ def help(game):
     utils.sym(game.global_entities["loot"]["sym"])}{
     cs.RESET_ALL}  can be found:
     - Health Potion - heals you for 25
-    - Rations - heals you per turn for 4, up to 40 in total
+    - Rations - heals you per turn for 4 for 10 turns, 40 in total
     - Scroll of Fireball - increases the strength of your next attack
       > based on level
     - Scroll of Shielding - gives you a shield, not mitigated by armor
@@ -418,6 +424,7 @@ You have {coin} with you.\n"""
 
     print(vendor_text)
 
+    # vendor purchase options
     rand_num = randrange(2, 6)
     item_list = {}
     for i in range(rand_num + 1):
@@ -432,6 +439,7 @@ You have {coin} with you.\n"""
             formula = (1+(game.global_level/12)) * 50
             price = randrange(int(round(formula*0.8)), int(round(formula)))
 
+        # to avoid duplicate entries
         if item[1] in item_list:
             if item[2] >= item_list[item[1]]["value"]:
                 item_list[item[1]]["value"] = item[2]
@@ -446,6 +454,7 @@ You have {coin} with you.\n"""
 
     i = 0
     d = i + 1
+    # printing all the items prev created
     for item in item_list:
         count = f"{cf.CYAN} {d} {cs.RESET_ALL}"
         coin = f"{coin_col}{coin_sym} {item_list[item]['price']}{cs.RESET_ALL}"
@@ -467,6 +476,7 @@ You have {coin} with you.\n"""
     # continues to show until the player is done
     input_msg = f"\nWhich item would you like to buy?\n> "
 
+    # input & dialogue for purchase request
     while True:
         try:
             player_input = int(input(input_msg))
@@ -530,6 +540,9 @@ def buy_item(item):
 
 
 def use(game):
+    """
+    Displays the players inventory
+    """
     # clearing the screen
     system('cls||clear')
 
@@ -549,6 +562,7 @@ def use(game):
     print(f"""
 Simply type the corresponding number of the item that you want to use
 followed by enter, or exit this screen by typing 0 and then enter.\n""")
+
     # continues to show until the player is done
     input_msg = "Which item would you like to use?\n> "
     while True:
@@ -611,6 +625,7 @@ def use_item(item, game):
         for i in range(enemy_amount):
             enemies[i]["draw"] = False
 
+    # reduce amount or remove entry from inventory
     if amount > 1:
         global_player.inventory[item] -= 1
     else:
@@ -620,6 +635,7 @@ def use_item(item, game):
 def regen_life():
     """
     Regenerates health after usage of rations
+    "hot" stands for heal over time
     """
     amount = 4
     if not hasattr(global_player, "hot"):
@@ -644,7 +660,7 @@ def game_over(game):
     title = "YOU DIED"
     print(f"""{cf.RED}{custom_fig.renderText(title)}{cs.RESET_ALL}
 You final stats were ...
-- level reached: {game.global_level} 
+- level reached: {game.global_level}
 - gold collected: {getattr(cf, game.global_entities[
     "gold"]["Fore"])}{utils.sym(game.global_entities[
 "gold"]["sym"])}{cs.RESET_ALL} {global_player.gold}.

@@ -12,9 +12,13 @@ class VisibleMap:
 
     def set_mask(self):
         """
-        Creates the initial global_mask
+        Creates the initial global_mask consisting of O's and X's
+        O's represent what the player can see
+        X's represent what the player cannot see
         """
+        # clears the mask list for each new level
         self.global_mask.clear()
+        # and creates a new list
         for i in range(11):
             if i == 0 or i == 10:
                 list_map = list(self.map[i])
@@ -36,6 +40,7 @@ class VisibleMap:
         """
         replacer = "O", "O", "O", "O", "O"
 
+        # 2 iterations for top and bottom, otherwise only one of them
         iterations = 2 if not coords[0] == 1 and not coords[0] == 9 else 1
         for i in range(iterations):
 
@@ -116,11 +121,12 @@ class VisibleMap:
 
     def display_map(self, coords, entities):
         """
-        Displays the map after formatting (like colorization) is finished
+        Displays the map after all formatting is finished
         """
         self.reveal_area(coords)
         self.reveal_map()
         self.colorize_map(entities)
-        map_to_render = self.global_visible  # self.map for debug
+
+        map_to_render = self.global_visible  # self.map for easy debug
         for i in range(len(map_to_render)):
             print(map_to_render[i])

@@ -85,7 +85,7 @@ def lane_to_xcoord(lane):
 
 def get_coords(coords, reverse=False):
     """
-    Converts coordinates from/to normalized to grid coordinates
+    Converts coordinates from/to true/readable coords
     """
     result = [0, 0]
 
@@ -101,8 +101,8 @@ def get_coords(coords, reverse=False):
 
 def get_path_options(prev_coords, coords, exclude_left, create_exit):
     """
-    Creates a path based on probabilities with properties to exclude
-    left and right for main path creation vs branch creation
+    Returns a direction based on probabilities with properties to
+    exclude left and right for main path creation vs branch creation
     """
     lane = coords[0]
     row = coords[1]
@@ -216,7 +216,7 @@ def generate_player_name():
 
 def generate_enemy_name():
     """
-    Generates and returns a random enemy name
+    Generates and returns a random enemy name & amount
     """
     prefix = [
         "Dirty",

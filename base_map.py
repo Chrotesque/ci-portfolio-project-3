@@ -78,6 +78,7 @@ class BaseMap:
             self.global_rooms["open"]["all"].append(real_coords)
             readable_coords = utils.next_coordinate(readable_coords, path)
             self.remove_wall(real_coords, path)
+            # place exit at the end of the map
             if readable_coords[1] == 18:
                 self.write_exit_coords(real_coords)
                 # rem player start pos so entities cant be placed @ same spot
@@ -163,7 +164,7 @@ class BaseMap:
             wall = list(self.global_base[coords[0]])
             wall[coords[1]+2] = replacer
             self.global_base[coords[0]] = "".join(wall)
-        else:
+        else:  # left
             wall = list(self.global_base[coords[0]])
             wall[coords[1]-2] = replacer
             self.global_base[coords[0]] = "".join(wall)
@@ -182,6 +183,7 @@ class BaseMap:
                 mid = list(self.global_base[coords[0]])
                 bot = list(self.global_base[coords[0]+1])
 
+                # check for an opening to a coordinate/room
                 if top[coords[1]] == " ":
                     status = True
                 elif bot[coords[1]] == " ":
@@ -202,6 +204,7 @@ class BaseMap:
         """
         coords = self.global_entities.get(entity)[
             "instance"][instance]["coords"]
+        # up
         if direction == "w":
             map = list(self.global_map[coords[0]-1])
             if map[coords[1]] == " ":
@@ -210,6 +213,7 @@ class BaseMap:
                 return 1
             else:
                 return 0
+        # down
         elif direction == "s":
             map = list(self.global_map[coords[0]+1])
             if map[coords[1]] == " ":
@@ -218,6 +222,7 @@ class BaseMap:
                 return 1
             else:
                 return 0
+        # left
         elif direction == "a":
             map = list(self.global_map[coords[0]])
             if map[coords[1]-2] == " ":
@@ -226,13 +231,14 @@ class BaseMap:
                 return 1
             else:
                 return 0
-        elif direction == "d":
+        # right
+        else:
             map = list(self.global_map[coords[0]])
             if map[coords[1]+2] == " ":
                 new_coords = [coords[0], coords[1]+4]
                 self.update_entity_coords(entity, instance, coords, new_coords)
                 return 1
-                # level advancement
+                # next level
             elif map[coords[1]+2] == utils.sym("tridown"):
                 return 2
             else:
@@ -242,14 +248,17 @@ class BaseMap:
         """
         Identifies and returns entity on players position
         """
+        # gets coords of players position
         coords = self.global_entities["player"]["instance"][0]["coords"]
         list_map = list(self.global_map[coords[0]])
         sym = list_map[coords[1]]
 
+        # checks all entity kinds for hit
         for item in self.global_entities:
             reference = self.global_entities.get(item)
             if utils.sym(reference['sym']) == sym:
 
+                # change draw to false, so it becomes invisible
                 for i in range(len(reference["instance"])):
                     if coords == reference["instance"][i]["coords"]:
                         reference["instance"][i]["draw"] = False
@@ -260,6 +269,8 @@ class BaseMap:
     def write_gold_coords(self):
         """
         Writes the gold loot coords to global_entities
+        A certain limited amount will be placed on the main path
+        The remainder will be placed on the branches
         """
         coords_list = []
         max_num = min(round((self.global_level/25 + 1) * 5), 10)
@@ -279,6 +290,7 @@ class BaseMap:
                 coords_list.append(rand_coord)
                 self.global_rooms["open"]["branches"].remove(rand_coord)
 
+        # creates entity entries
         for i in range(len(coords_list)):
             entity_to_add = {
                 "draw": True,
@@ -307,6 +319,7 @@ class BaseMap:
                 coords_list.append(rand_coord)
                 self.global_rooms["open"]["branches"].remove(rand_coord)
 
+        # creates entity entries
         for i in range(len(coords_list)):
             entity_to_add = {
                 "draw": True,
@@ -336,6 +349,7 @@ class BaseMap:
                 coords_list.append(rand_coord)
                 self.global_rooms["open"]["branches"].remove(rand_coord)
 
+        # creates entity entries
         for i in range(len(coords_list)):
             entity_to_add = {
                 "draw": True,
@@ -358,6 +372,7 @@ class BaseMap:
     def place_entities(self):
         """
         Writes all entities from global_entities to newly created global_map
+        According to their respective coordinates
         """
         # copies the base map
         self.global_map = self.global_base[:]
