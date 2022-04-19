@@ -229,11 +229,10 @@ def entity_interaction(interacting_entity, game):
         elif loot[0] == "weapon":
             if loot[2] > global_player.dmg:
                 global_player.dmg = loot[2]
-                string = f"You found and equipped the {loot[0]}, {loot[1]} "\
-                          f"(+{loot[2]})"
+                string = f"""You found and equipped the {loot[0]}:
+     {loot[1]} (+{loot[2]})"""
             else:
-                string = f"""You found the {loot[0]}, {loot[1]} (+{loot[2]}) -
-                 it was not an upgrade."""
+                string = f"You found a weapon, it was not an upgrade."
 
         elif loot[0] == "scroll":
             string = f"You found a {loot[1]}"
@@ -245,11 +244,10 @@ def entity_interaction(interacting_entity, game):
         else:  # armor
             if loot[2] > global_player.armor:
                 global_player.armor = loot[2]
-                string = f"""You found and equipped a piece of {loot[0]},
-                 {loot[1]} (+{loot[2]})"""
+                string = f"""You found and equipped a piece of {loot[0]}:
+     {loot[1]} (+{loot[2]})"""
             else:
-                string = f"""You found a piece of {loot[0]}, {loot[1]}
-                 (+{loot[2]}) - it was not an upgrade."""
+                string = f"You found a piece of armor, it was not an upgrade."
 
         global_notification.modify_note(string)
 
