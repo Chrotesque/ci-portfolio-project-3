@@ -498,11 +498,11 @@ You have {coin} with you.\n"""
                     type = selection["type"]
                     if type == "weapon" or type == "armor":
                         note = f"You bought: {selection['name']}"\
-                                "(+{selection['value']})"
+                               f"(+{selection['value']})"
                         global_notification.modify_note(note)
                     else:
                         note = f"You bought: {selection['name']} "\
-                                "x{selection['value']}"
+                               f"x{selection['value']}"
                         global_notification.modify_note(note)
 
                     buy_item(selection)
@@ -663,7 +663,7 @@ You final stats were ...
 - level reached: {game.global_level}
 - gold collected: {getattr(cf, game.global_entities[
     "gold"]["Fore"])}{utils.sym(game.global_entities[
-"gold"]["sym"])}{cs.RESET_ALL} {global_player.gold}.
+"gold"]["sym"])}{cs.RESET_ALL} {global_player.gold}
 - damage ability: {global_player.dmg} dmg
 - armor value: {
 global_player.armor}
