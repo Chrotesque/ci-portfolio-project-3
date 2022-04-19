@@ -121,6 +121,6 @@ class VisibleMap:
         self.reveal_area(coords)
         self.reveal_map()
         self.colorize_map(entities)
-        map_to_render = self.global_visible
+        map_to_render = self.global_visible  # self.map for debug
         for i in range(len(map_to_render)):
             print(map_to_render[i])

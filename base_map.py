@@ -83,8 +83,6 @@ class BaseMap:
                 # rem player start pos so entities cant be placed @ same spot
                 self.global_rooms["open"]["main"].remove(utils.get_coords(
                     [utils.lane_to_xcoord(self.side), 0]))
-                self.global_rooms["open"]["all"].remove(utils.get_coords(
-                    [utils.lane_to_xcoord(self.side), 0]))
 
     def create_branches(self):
         """
@@ -92,9 +90,15 @@ class BaseMap:
         room to global_base by wall removal and writes coords of open rooms to
         global_rooms
         """
-        branch_amount = 0
-        while branch_amount < 4:
-            branch_amount += 1
+        branch_num = 0
+        branch_max = 4
+        while branch_num < branch_max:
+
+            # safeguard against fragmenting the map too much
+            if branch_max == 9:
+                break
+
+            branch_num += 1 
             new_open_rooms = []
             prev_coords = self.global_rooms["closed"][
                 randrange(0, len(self.global_rooms["closed"]))]
@@ -103,9 +107,9 @@ class BaseMap:
             prev_coords = utils.get_coords(prev_coords, True)
             readable_coords = prev_coords[:]
 
-            finish = False
             # carve out a branch until an open room is hit
-            while not finish:
+            j = 0
+            while True:
                 branch = utils.get_path_options(
                     prev_coords, readable_coords, False, False)
                 prev_coords = readable_coords[:]
@@ -115,22 +119,20 @@ class BaseMap:
                 # next room is on closed room list
                 if utils.get_coords(readable_coords) in self.global_rooms[
                         "closed"]:
-
                     self.global_rooms["closed"].remove(
                         utils.get_coords(readable_coords))
                     new_open_rooms.append(utils.get_coords(readable_coords))
                     self.remove_wall(real_coords, branch)
+                    j += 1
                 # next room was on closed room list and already opened up
                 elif utils.get_coords(readable_coords) in new_open_rooms:
                     continue
+
                 # next room is on open room list
-                elif utils.get_coords(readable_coords) in self.global_rooms[
-                        "open"]["all"]:
+                else:  # utils.get_coords(readable_coords) in self.global_rooms[
+                       # "open"]["all"]:
                     self.remove_wall(real_coords, branch)
-                    finish = True
                     break
-                else:
-                    print("this shouldn't happen")
 
             # add newly opened rooms to open room list
             for i in range(len(new_open_rooms)):
@@ -139,7 +141,27 @@ class BaseMap:
 
             # extend the while loop if branch is super short
             if len(new_open_rooms) < 2:
-                branch_amount -= 1
+                branch_max += 1
+
+    def create_branches2(self):
+        """
+
+        """
+        branch_amount = 0
+        branch = 1
+        while branch_amount < 4:
+            
+            initial_coords = self.global_rooms["closed"][
+                randrange(0, len(self.global_rooms["closed"]))]
+
+
+            list_map = list(self.global_base[initial_coords[0]]) #
+            list_map[initial_coords[1]] = str(branch) #
+            self.global_base[initial_coords[0]] = "".join(list_map) #
+
+            branch_amount += 1
+            branch += 1
+
 
     def remove_wall(self, coords, side, replacer=" "):
         """

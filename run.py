@@ -17,7 +17,7 @@ custom_fig = Figlet(font="cybermedium")
 
 global_notification = notifications.Notifications()
 global_player = entity.Player(
-    name="", hp_cur=100, hp_max=100, dmg=2, gold=2250, armor=2, inventory={
+    name="", hp_cur=100, hp_max=100, dmg=2, gold=50, armor=2, inventory={
         "Rations": 1, "Health Potion": 2})
 
 COMMANDS = {
