@@ -37,6 +37,9 @@ I spent a good amount of time before typing any code planning and thinking throu
 
 # **Features** ([^](#table-of-contents))
 - The game starts off by asking the player for a name, which - if not provided - will be provided for the player
+
+    ![Title](assets/images/readme/title.jpg)
+
 - The player is being thrown in a randomly generated dungeon with 1 main path and several (random amount) branches leading into the main path
 - The level is divided into 3 "lanes", L1 being the easiest with L3 being the hardest - enemies scale depending on what lane they're being fought on
 
@@ -100,7 +103,7 @@ I spent a good amount of time before typing any code planning and thinking throu
 
 1. <a href="http://pep8online.com/" target="_blank">PEP8 Online</a> was used to validate all python code, I made sure that it contains no errors or warnings.
 
-2. I modified the HTML and CSS slightly to be easier on the eyes, however no extra visible elements were added. Given the non responsive nature of the template used from Code Institute, nothing has changed in that respect and no additional testing or validation was done.
+2. I modified the HTML and CSS slightly to be easier on the eyes, however no extra visible elements were added. Given the non responsive nature of the <a href="https://github.com/Code-Institute-Org/python-essentials-template" target="_blank">template</a> used from Code Institute, nothing has changed in that respect and no additional testing or validation was done.
 
 3. Manual testing through Gitpod and Heroku was done extensively to ensure that all features and user inputs work flawlessly and are accounted for. 
 
@@ -173,12 +176,15 @@ Heroku is being used to deploy this python based project. There's a few ways to 
 
 # **Credits** ([^](#table-of-contents))
 External modules used:
-- random for random number generation (https://docs.python.org/3/library/random.html)
-- colorama for color various elements (https://github.com/tartley/colorama)
-- math for rounding operations (https://docs.python.org/3/library/math.html)
-- numpy for probabilities (https://numpy.org/)
-- os for clearing the screen (https://docs.python.org/3/library/os.html)
-- pyfiglet for ASCII art font (https://github.com/pwaller/pyfiglet)
+- <a href="https://docs.python.org/3/library/random.html" target="_blank">random for random number generation</a>
+- <a href="https://github.com/tartley/colorama" target="_blank">colorama for color various elements</a>
+- <a href="https://docs.python.org/3/library/math.html" target="_blank">math for rounding operations</a>
+- <a href="https://numpy.org/" target="_blank">numpy for probabilities</a>
+- <a href="https://docs.python.org/3/library/os.html" target="_blank">os for clearing the screen</a>
+- <a href="https://github.com/pwaller/pyfiglet" target="_blank">pyfiglet for ASCII art font</a>
+
+Based off of:
+- <a href="https://github.com/Code-Institute-Org/python-essentials-template" target="_blank">python essentials template from Code Institute</a>
 
 All other code was written by myself.
 
